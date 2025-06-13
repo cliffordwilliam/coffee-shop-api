@@ -11,6 +11,7 @@ best coffee shop api ever
 2. [ ] update schema
 3. [ ] add seed
 4. [ ] make hello endpoint
+4. [ ] add ant fu lint
 
 ## prerequisites
 - docker: [install docker engine on ubuntu](https://docs.docker.com/engine/install/ubuntu/)
