@@ -17,5 +17,4 @@ best coffee shop api ever
 
 
 ## quickstart
-
 just run the `local-start.sh` to run this app in a container, don't forget to `docker compose down` to kill container.
