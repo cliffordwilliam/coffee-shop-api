@@ -7,7 +7,7 @@ best coffee shop api ever
 - prisma orm
 
 ## todo
-1. [ ] bash start app script
+1. [x] bash start app script
 2. [ ] make hello endpoint
 
 ## prerequisites
