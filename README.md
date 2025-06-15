@@ -8,7 +8,7 @@ best coffee shop api ever
 
 ## todo
 1. [x] bash start app script
-2. [ ] update schema
+2. [x] update schema
 3. [ ] add seed
 4. [ ] make hello endpoint
 4. [ ] add ant fu lint
