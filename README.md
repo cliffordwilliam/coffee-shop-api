@@ -13,7 +13,7 @@ best coffee shop api ever
 1. [x] bash start app script
 2. [x] update schema
 3. [x] add seed
-4. [ ] make hello endpoint
+4. [x] make hello endpoint
 5. [x] add prettier formatter
 6. [x] add typescript eslint linter
 
@@ -23,4 +23,4 @@ best coffee shop api ever
 
 ## quickstart
 
-just run the `local-start.sh` to run this app in a container, don't forget to `docker compose down` to kill container.
+just run the `local-start.sh` to run this app in a container.
