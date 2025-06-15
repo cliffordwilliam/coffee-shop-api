@@ -1,4 +1,7 @@
 {
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "name": "coffee-shop-api",
   "version": "1.0.0",
   "description": "best coffee shop api ever",
