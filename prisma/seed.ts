@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 async function main() {
   const coffees = Array.from({ length: 10 }).map(() => ({
