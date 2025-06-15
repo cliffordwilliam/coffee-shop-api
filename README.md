@@ -14,7 +14,8 @@ best coffee shop api ever
 2. [x] update schema
 3. [x] add seed
 4. [ ] make hello endpoint
-5. [ ] add ant fu lint
+5. [x] add prettier formatter
+6. [x] add typescript eslint linter
 
 ## prerequisites
 
