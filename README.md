@@ -41,11 +41,40 @@
 
 ### Running the Application
 
-To run the application, you can use the [local-start.sh] script from the root directory.
+To run the application, you can use the [local-start.sh](local-start.sh) script from the root directory.
 
 ```bash
 ./local-start.sh
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at http://localhost:3000
 API documentation is available at COMING SOON
+
+### Code Quality Tools
+
+#### Pre-commit Hooks
+
+The project uses pre-commit hooks:
+
+- Prettier: Formats all file types (e.g., .ts, .js, .json, .md, etc.).
+- ESLint: Lints and auto-fixes .ts and .js files in the src directory.
+
+To run pre-commit manually:
+
+```bash
+npx lint-staged
+```
+
+#### Unit Test
+
+Run unit tests with coverage
+
+COMING SOON
+
+### Database Management
+
+### API Development
+
+- Follow RESTful API design principles
+- Implement proper error handling
+- Use request/response validation
