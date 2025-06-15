@@ -1,26 +1,51 @@
-# coffee-shop-api
+# Coffee Shop Backend Development Guide
 
-best coffee shop api ever
+## Technology Stack
 
-## stack
+- Node.js v22.16.0
+- Express.js (Node.js)
+- PostgreSQL
+- Prisma ORM
 
-- postgresql
-- express
-- prisma orm
+## Development Environment Setup
 
-## todo
+### Prerequisites
 
-1. [x] bash start app script
-2. [x] update schema
-3. [x] add seed
-4. [x] make hello endpoint
-5. [x] add prettier formatter
-6. [x] add typescript eslint linter
+- [Node.js v22.16.0 or higher](https://nodejs.org/en/download/)
+- [npm (Node package manager)](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Docker and Docker Compose](https://docs.docker.com/engine/install/)
+- [Git](https://github.com/git-guides/install-git)
 
-## prerequisites
+### Project Structure
 
-- docker: [install docker engine on ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+```text
+./
+├── src/
+│   ├── app.ts                     # Express app configuration
+│   ├── main.ts                    # App entry point
+│   ├── prisma/
+│   │   └── client.ts              # Prisma client singleton
+│   ├── routes/
+│   │   └── {module}.routes.ts     # {module} API routes
+│   ├── controllers/
+│       └── {module}.controller.ts # {module} controller logic
+├── .env                           # Environment variables
+├── docker-compose.yml             # Docker services (Postgres, etc.)
+├── local-start.sh                 # Development startup script
+└── ...
+```
 
-## quickstart
+---
 
-just run the `local-start.sh` to run this app in a container.
+## Development Workflow
+
+### Running the Application
+
+To run the application, you can use the [local-start.sh] script from the root directory.
+
+```bash
+./local-start.sh
+```
+
+The API will be available at `http://localhost:3000`
+API documentation is available at COMING SOON
