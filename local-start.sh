@@ -53,7 +53,7 @@ echo "✅ .env is present."
 NVM_DIR="$HOME/.nvm"
 NODE_REQUIRED_MAJOR=20
 DBMS_CONTAINER_NAME="coffee_shop_postgres"
-DOCKER_COMPOSE_FILE="docker-compose.dev.yaml"
+DOCKER_COMPOSE_FILE="docker-compose.yaml"
 POSTGRES_USER="postgres"
 IS_CONTAINER_MADE=false
 MAX_RETRIES=30
