@@ -49,6 +49,17 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 > If a container with that name already exists (even stopped), the setup will fail.
 > Remove or rename any existing `postgres` containers before running the script.
 
+#### 👤 Docker Group Access
+
+> 🛑 **Linux users:**
+> This project assumes your user is in the `docker` group.
+
+The `./local-start.sh` script uses Docker and Node.js via `nvm`. Running it with `sudo` breaks `nvm`, and prompting for `sudo` on every Docker call is disruptive.
+
+While adding your user to the `docker` group is a known security risk (it grants root-level access), it’s a common tradeoff most developers accept for convenience in local development.
+
+👉 [Docker Post-install Instructions](https://docs.docker.com/engine/install/linux-postinstall/)
+
 ---
 
 ### 🧠 Managing Node.js Versions
