@@ -1,0 +1,8 @@
+services:
+  postgres:
+    image: postgres
+    container_name: coffee_shop_postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+       POSTGRES_PASSWORD: postgres
