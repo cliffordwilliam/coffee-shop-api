@@ -1,12 +1,14 @@
+import { env } from './config/env';
 import express from 'express';
+import coffeeRoutes from './modules/coffee/coffee.route';
 
-const app = express()
-const port = 3000
+const app = express();
+const PORT = env.port;
 
-app.get('/', (_req, res) => {
-  res.send('Hello World!');
+app.use(express.json());
+
+app.use('/api/coffee', coffeeRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
-})

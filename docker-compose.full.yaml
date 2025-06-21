@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: ${DBMS_CONTAINER_IMAGE}
+    container_name: ${DBMS_CONTAINER_NAME}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+       POSTGRES_PASSWORD: ${DB_PASSWORD}
+       POSTGRES_DB: ${DB_NAME}
+    networks:
+      - ${CUSTOM_NETWORK}
+
+  app:
+    build:
+      context: .
+      dockerfile: ${BE_APP_CONTAINER_DOCKERFILE}
+    container_name: ${BE_APP_CONTAINER_NAME}
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      # Inject app env here
+      DATABASE_URL: "${DBMS_CONTAINER_URL}"
+      PORT: "${PORT}"
+    depends_on:
+      - ${DBMS_CONTAINER_IMAGE}
+    networks:
+      - ${CUSTOM_NETWORK}
+
+networks:
+  coffee_shop_net:
+    name: ${CUSTOM_NETWORK_NAME}

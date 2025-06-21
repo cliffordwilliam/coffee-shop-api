@@ -1,0 +1,10 @@
+.git
+generated
+node_modules
+.env
+.env.example
+.gitignore
+docker-compose*.yaml
+Dockerfile
+local-start*.sh
+README.md

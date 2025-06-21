@@ -1,9 +1,9 @@
 services:
   postgres:
-    image: postgres
-    container_name: coffee_shop_postgres
+    image: ${DBMS_CONTAINER_IMAGE}
+    container_name: ${DBMS_CONTAINER_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     environment:
-       POSTGRES_PASSWORD: postgres
-       POSTGRES_DB: coffee-shop-api
+       POSTGRES_PASSWORD: ${DB_PASSWORD}
+       POSTGRES_DB: ${DB_NAME}

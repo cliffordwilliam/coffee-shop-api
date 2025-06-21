@@ -49,14 +49,18 @@ if [ ! -f ".env" ]; then
 fi
 echo "✅ .env is present."
 
+set -a
+source .env
+set +a
+
 # Constants
-NVM_DIR="$HOME/.nvm"
-NODE_REQUIRED_MAJOR=20
-DBMS_CONTAINER_NAME="coffee_shop_postgres"
-DOCKER_COMPOSE_FILE="docker-compose.yaml"
-POSTGRES_USER="postgres"
+NVM_DIR="$NVM_DIR"
+NODE_REQUIRED_MAJOR=${NODE_REQUIRED_MAJOR}
+DBMS_CONTAINER_NAME="${DBMS_CONTAINER_NAME}"
+DOCKER_COMPOSE_FILE="${REGULAR_YAML}"
+POSTGRES_USER="${DB_USER}"
 IS_CONTAINER_MADE=false
-MAX_RETRIES=30
+MAX_RETRIES=${MAX_RETRIES}
 
 wait_for_ready() {
   local name="$1"
@@ -174,22 +178,22 @@ echo "✅ PostgreSQL is ready."
 
 # Prisma
 exit_on_lie "Prisma CLI is available" "npx --yes prisma --version >/dev/null 2>&1"
+# I decided not to check if the content of schema file and seed file is valid or not
 exit_on_lie "Prisma schema is pushed to database" "npx prisma db push"
 exit_on_lie "Prisma client is generated" "npx prisma generate"
-# I decided not to check what seeds are inside, just if the seed file is there
-exit_on_lie "'prisma/seed.ts' exists" "[ -f 'prisma/seed.ts' ]"
-exit_on_lie '"seed" script exists in package.json' "jq -e '.prisma.seed' package.json >/dev/null 2>&1"
+exit_on_lie "'${PRISMA_SEED_FILE_PATH}' exists" "[ -f \"${PRISMA_SEED_FILE_PATH}\" ]"
+exit_on_lie "\"${PRISMA_SEED_SCRIPT_NAME}\" script exists in package.json" "jq -e '.prisma[\"${PRISMA_SEED_SCRIPT_NAME}\"]' package.json >/dev/null 2>&1"
 exit_on_lie "Database is seeded" "npx prisma db seed"
 
 # Mark Start BE App on host port
 print_banner "Starting BE App on Host Port"
-exit_on_lie "\"dev\" script exists in package.json" "jq -e '.scripts.dev' package.json >/dev/null 2>&1"
-exit_on_lie "Port 3000 is free" "! lsof -i :3000 >/dev/null 2>&1"
+exit_on_lie "\"${PACKAGE_JSON_DEV_SCRIPT_NAME}\" script exists in package.json" "jq -e '.scripts[\"${PACKAGE_JSON_DEV_SCRIPT_NAME}\"]' package.json >/dev/null 2>&1"
+exit_on_lie "Port ${PORT} is free" "! lsof -i :${PORT} >/dev/null 2>&1"
 npm run dev & 
 APP_PID=$!
-# Wait until the app responds on port 3000 or timeout after 10 seconds
-wait_for_ready "Local App" "curl -s http://localhost:3000 >/dev/null"
-exit_on_lie "BE App is running" "lsof -i :3000 >/dev/null 2>&1"
+# Wait until the app responds on port ${PORT} or timeout after 10 seconds
+wait_for_ready "Local App" "curl -s http://localhost:${PORT} >/dev/null"
+exit_on_lie "BE App is running" "lsof -i :${PORT} >/dev/null 2>&1"
 echo "👉 Press Ctrl C to stop the server"
-echo "🌐 Visit http://localhost:3000"
+echo "🌐 Visit http://localhost:${PORT}"
 wait $APP_PID
