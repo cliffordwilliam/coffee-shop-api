@@ -1,6 +1,6 @@
 // src/modules/coffee/coffee.service.ts
 
-import { PrismaClient } from '../../../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { CreateCoffeeDTO, UpdateCoffeeDTO } from './coffee.model';
 
 const prisma = new PrismaClient();
