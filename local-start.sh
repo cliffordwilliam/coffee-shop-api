@@ -192,8 +192,8 @@ exit_on_lie "Port ${PORT} is free" "! lsof -i :${PORT} >/dev/null 2>&1"
 npm run dev & 
 APP_PID=$!
 # Wait until the app responds on port ${PORT} or timeout after 10 seconds
-wait_for_ready "Local App" "curl -s http://localhost:${PORT} >/dev/null"
+wait_for_ready "Local App" "curl -s http://localhost:${PORT}${API_PREFIX} >/dev/null"
 exit_on_lie "BE App is running" "lsof -i :${PORT} >/dev/null 2>&1"
 echo "👉 Press Ctrl C to stop the server"
-echo "🌐 Visit http://localhost:${PORT}"
+echo "🌐 Visit http://localhost:${PORT}${API_PREFIX}"
 wait $APP_PID

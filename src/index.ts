@@ -7,8 +7,10 @@ const PORT = env.port;
 
 app.use(express.json());
 
-app.use('/api/coffee', coffeeRoutes);
+const apiRouter = express.Router();
+apiRouter.use('/coffee', coffeeRoutes);
+app.use(env.apiPrefix, apiRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}${env.apiPrefix}`);
 });

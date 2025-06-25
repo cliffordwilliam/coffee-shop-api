@@ -186,7 +186,7 @@ exit_on_lie "DBMS Container is seeded by BE App Container" "docker exec "$CONTAI
 # Mark Start BE App Container & DBMS Container
 print_banner "BE App Container & DBMS Container are ready"
 echo "👉 Press Ctrl C to stop the server"
-echo "🌐 Visit http://localhost:${PORT}"
+echo "🌐 Visit http://localhost:${PORT}${API_PREFIX}"
 
 # Wait to keep logs visible
 docker compose -f "$DOCKER_COMPOSE_FILE" logs -f & LOG_PID=$!

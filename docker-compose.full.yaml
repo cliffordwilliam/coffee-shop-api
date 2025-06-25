@@ -19,8 +19,10 @@ services:
       - "${PORT}:${PORT}"
     environment:
       # Inject app env here
+      API_PREFIX: "${API_PREFIX}"
       DATABASE_URL: "${DBMS_CONTAINER_URL}"
       PORT: "${PORT}"
+      NODE_ENV: "${NODE_ENV}"
     depends_on:
       - ${DBMS_CONTAINER_IMAGE}
     networks:

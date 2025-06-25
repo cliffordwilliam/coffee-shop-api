@@ -1,9 +1,7 @@
 // src/modules/coffee/coffee.service.ts
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { CreateCoffeeDTO, UpdateCoffeeDTO } from './coffee.model';
-
-const prisma = new PrismaClient();
 
 export const getAllCoffees = () => {
   return prisma.coffee.findMany();
