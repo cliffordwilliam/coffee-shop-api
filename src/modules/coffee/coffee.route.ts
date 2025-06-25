@@ -2,7 +2,7 @@
 
 import { Router } from 'express';
 import * as coffeeController from './coffee.controller';
-import { validate } from '../../middlewares/validate';
+import { validate } from '@/middlewares/validate';
 import { CreateCoffeeSchema, UpdateCoffeeSchema } from './coffee.model';
 
 const router = Router();
