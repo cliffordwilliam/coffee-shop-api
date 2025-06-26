@@ -1,9 +1,9 @@
 // src/middlewares/errorHandler.ts
-import { ERROR_CODES } from '@/modules/api/errorCodes';
-import { NextFunction, Request, Response } from 'express';
-import { ZodError } from 'zod';
-import { ApiError } from '@/modules/api/ApiError';
-import type { ErrorResponse } from '@/modules/api/types';
+import { ERROR_CODES } from "@/modules/api/errorCodes";
+import { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
+import { ApiError } from "@/modules/api/ApiError";
+import type { ErrorResponse } from "@/modules/api/types";
 
 // App level error catcher from whoever inside app that threw it
 export function errorHandler(
@@ -11,13 +11,13 @@ export function errorHandler(
   err: Error,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   // Catch error thrown by Zod (ZodError entity)
   if (err instanceof ZodError) {
     // Build custom meta using Zod error list
     const details = err.errors.map((e) => ({
-      field: e.path.join('.'),
+      field: e.path.join("."),
       message: e.message,
       type: e.code,
     }));
@@ -25,11 +25,11 @@ export function errorHandler(
     const errorResponse: ErrorResponse = {
       success: false,
       error: {
-        message: 'Request validation error',
+        message: "Request validation error",
         code: ERROR_CODES.VALIDATION_ERROR,
         details,
       },
-    }
+    };
     // Give it to client
     res.status(422).json(errorResponse);
   }
@@ -56,7 +56,7 @@ export function errorHandler(
   const errorResponse: ErrorResponse = {
     success: false,
     error: {
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       code: ERROR_CODES.INTERNAL_ERROR,
     },
   };

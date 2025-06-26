@@ -1,9 +1,9 @@
 // src/modules/coffee/coffee.controller.ts
 
-import { Request, Response } from 'express';
-import * as coffeeService from './coffee.service';
-import type { SuccessResponse } from '@/modules/api/types';
-import { NotFoundError } from '@/modules/api/NotFoundError';
+import { Request, Response } from "express";
+import * as coffeeService from "./coffee.service";
+import type { SuccessResponse } from "@/modules/api/types";
+import { NotFoundError } from "@/modules/api/NotFoundError";
 
 export const getAll = async (_req: Request, res: Response) => {
   const coffees = await coffeeService.getAllCoffees();
@@ -20,7 +20,7 @@ export const getById = async (req: Request, res: Response) => {
   const coffee = await coffeeService.getCoffeeById(id);
   if (!coffee) {
     // Throw my error entity obj (NOT FOUND)
-    throw new NotFoundError('Coffee not found');
+    throw new NotFoundError("Coffee not found");
   }
   // Send my success response shape
   const response: SuccessResponse<typeof coffee> = {
@@ -52,7 +52,7 @@ export const update = async (req: Request, res: Response) => {
     res.json(response);
   } catch (error) {
     // Throw my error entity obj (NOT FOUND)
-    throw new NotFoundError('Coffee not found');
+    throw new NotFoundError("Coffee not found");
   }
 };
 
@@ -63,6 +63,6 @@ export const remove = async (req: Request, res: Response) => {
     res.status(200).json({ success: true });
   } catch (error) {
     // Throw my error entity obj (NOT FOUND)
-    throw new NotFoundError('Coffee not found');
+    throw new NotFoundError("Coffee not found");
   }
 };

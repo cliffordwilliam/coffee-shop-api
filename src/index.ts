@@ -1,7 +1,7 @@
-import { env } from './config/env';
-import express from 'express';
-import coffeeRoutes from './modules/coffee/coffee.route';
-import { errorHandler } from './middlewares/errorHandler';
+import { env } from "./config/env";
+import express from "express";
+import coffeeRoutes from "./modules/coffee/coffee.route";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 const PORT = env.port;
@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Prefix
 const apiRouter = express.Router();
-apiRouter.use('/coffee', coffeeRoutes);
+apiRouter.use("/coffee", coffeeRoutes);
 
 // Modules
 app.use(env.apiPrefix, apiRouter);

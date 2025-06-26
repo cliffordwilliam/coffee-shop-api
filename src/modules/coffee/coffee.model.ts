@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const CreateCoffeeSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
-  price: z.number().positive('Price must be positive'),
+  price: z.number().positive("Price must be positive"),
 });
 
 export const UpdateCoffeeSchema = CreateCoffeeSchema.partial();

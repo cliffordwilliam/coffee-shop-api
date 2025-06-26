@@ -8,12 +8,12 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 
 ## ⚙️ Technology Stack
 
-* **Language**: TypeScript
-* **Framework**: Express.js
-* **Database**: PostgreSQL (via Docker)
-* **ORM**: Prisma
-* **DevOps**: Docker & Docker Compose
-* **Package Manager**: npm
+- **Language**: TypeScript
+- **Framework**: Express.js
+- **Database**: PostgreSQL (via Docker)
+- **ORM**: Prisma
+- **DevOps**: Docker & Docker Compose
+- **Package Manager**: npm
 
 ---
 
@@ -21,16 +21,16 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 
 ### 📋 Prerequisites
 
-* [Node.js](https://nodejs.org/en/) v20.x (install via [nvm](https://github.com/nvm-sh/nvm))
-* [Docker](https://www.docker.com/)
-* [Docker Compose](https://docs.docker.com/compose/)
-* Git
+- [Node.js](https://nodejs.org/en/) v20.x (install via [nvm](https://github.com/nvm-sh/nvm))
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- Git
 
 > ⚠️ **Important:**
 > This app uses Docker containers named:
 >
-> * `coffee_shop_postgres` (PostgreSQL)
-> * `coffee_shop_api` (App container — only in full Docker mode)
+> - `coffee_shop_postgres` (PostgreSQL)
+> - `coffee_shop_api` (App container — only in full Docker mode)
 >
 > If containers with these names already exist (even stopped), the setup will fail.
 > Please remove or rename them before running either setup script.
@@ -44,8 +44,8 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 
 The setup scripts (`./local-start-dev.sh` and `./local-start-dev-full.sh`) interact with Docker **without `sudo`**. However:
 
-* Running the script with `sudo` will break `nvm` (Node Version Manager)
-* Running Docker commands without being in the `docker` group may fail or prompt repeatedly
+- Running the script with `sudo` will break `nvm` (Node Version Manager)
+- Running Docker commands without being in the `docker` group may fail or prompt repeatedly
 
 To fix this:
 
@@ -99,29 +99,27 @@ nvm use 20
 
 This script will:
 
-* Warn if a Docker container named `coffee_shop_postgres` already exists (even if stopped)
+- Warn if a Docker container named `coffee_shop_postgres` already exists (even if stopped)
 
-* Validate all prerequisites:
+- Validate all prerequisites:
+  - Docker and Docker Compose
+  - Node.js v20 (via NVM)
+  - Internet connectivity
 
-  * Docker and Docker Compose
-  * Node.js v20 (via NVM)
-  * Internet connectivity
+- Auto-copy `.env.example` to `.env` if missing
 
-* Auto-copy `.env.example` to `.env` if missing
+- Install Node.js dependencies via `npm install`
 
-* Install Node.js dependencies via `npm install`
+- Start **PostgreSQL** using `docker-compose.dev.yaml`
 
-* Start **PostgreSQL** using `docker-compose.dev.yaml`
+- Wait until PostgreSQL is ready to accept connections
 
-* Wait until PostgreSQL is ready to accept connections
+- Run Prisma commands:
+  - Push schema: `npx prisma db push`
+  - Generate client: `npx prisma generate`
+  - Seed data: `npx prisma db seed`
 
-* Run Prisma commands:
-
-  * Push schema: `npx prisma db push`
-  * Generate client: `npx prisma generate`
-  * Seed data: `npx prisma db seed`
-
-* Start the dev server in the background: `npm run dev`
+- Start the dev server in the background: `npm run dev`
 
 > 🌐 Your API will be live at: [http://localhost:3000](http://localhost:3000)
 
@@ -137,25 +135,23 @@ This script will:
 
 This script will:
 
-* Warn if containers `coffee_shop_postgres` or `coffee_shop_api` already exist (even stopped)
+- Warn if containers `coffee_shop_postgres` or `coffee_shop_api` already exist (even stopped)
 
-* Validate all prerequisites:
+- Validate all prerequisites:
+  - Docker and Docker Compose
 
-  * Docker and Docker Compose
+- Auto-copy `.env.example` to `.env` if missing
 
-* Auto-copy `.env.example` to `.env` if missing
+- Start **both** the app and database using `docker-compose.dev.full.yaml`
 
-* Start **both** the app and database using `docker-compose.dev.full.yaml`
+- Wait until PostgreSQL is ready to accept connections
 
-* Wait until PostgreSQL is ready to accept connections
+- Run Prisma commands _inside the app container_:
+  - Push schema
+  - Generate client
+  - Seed data
 
-* Run Prisma commands *inside the app container*:
-
-  * Push schema
-  * Generate client
-  * Seed data
-
-* Attach to container logs for live output
+- Attach to container logs for live output
 
 > 🌐 Your API will be live at: [http://localhost:3000](http://localhost:3000)
 
@@ -167,11 +163,11 @@ This script will:
 
 If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgAdmin, or Postico), you can connect using:
 
-* **Host**: `localhost`
-* **Port**: `5432` (or your configured port)
-* **Username**: `postgres`
-* **Password**: (check your `.env` file)
-* **Database**: `coffee-shop-api`
+- **Host**: `localhost`
+- **Port**: `5432` (or your configured port)
+- **Username**: `postgres`
+- **Password**: (check your `.env` file)
+- **Database**: `coffee-shop-api`
 
 ---
 
@@ -179,10 +175,10 @@ If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgA
 
 1. Create a new branch from `main`.
 2. Use descriptive branch names, prefixed by the type of work:
-   * `feat/`: New features
-   * `fix/`: Bug fixes
-   * `chore/`: Tooling or config changes
-   * `docs/`: Documentation updates
+   - `feat/`: New features
+   - `fix/`: Bug fixes
+   - `chore/`: Tooling or config changes
+   - `docs/`: Documentation updates
 3. Open pull requests to `main`.
 4. Ensure all tests and checks pass.
 5. Use **Squash Merge** for a clean commit history.
