@@ -1,7 +1,11 @@
 import { RequestHandler } from "express";
 import { ZodError, z } from "zod";
 
-// Generic middleware to validate and type req.body
+// Middleware to validate and type shape req.body
+// Takes in any Zod obj type shape
+// Return explicit inferred body shape
+// If invalid, throw my custom Zod error obj entity
+// If valid, continue with inferred req body type shape
 export const validateBody = <T extends z.ZodTypeAny>(
   schema: T,
 ): RequestHandler<{}, any, z.infer<T>> => {
@@ -15,7 +19,11 @@ export const validateBody = <T extends z.ZodTypeAny>(
   };
 };
 
-// Generic middleware to validate and type req.params
+// Middleware to validate and type shape req.params
+// Takes in any Zod obj type shape
+// Return explicit inferred param query shape
+// If invalid, throw my custom Zod error obj entity
+// If valid, continue with inferred param query type shape
 export const validateParams = <T extends z.ZodTypeAny>(
   schema: T,
 ): RequestHandler<z.infer<T>> => {

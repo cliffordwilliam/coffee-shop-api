@@ -2,14 +2,19 @@
 import { z } from "zod";
 import { SuccessResponseSchema } from "@/modules/api/schema";
 
-// 1. Base schema for all coffee input (Zod obj entity)
+// Schema = Zod obj entity for validation
+// Shape type = Strict typing
+
+// Base schema for all coffee input (Zod obj entity)
+// Used for input payload
 export const CoffeeBaseSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
   price: z.number().positive("Price must be positive"),
 });
 
-// 2. Full coffee object for responses (Zod obj entity + Shape)
+// Full coffee object for responses (Zod obj entity + Shape Type)
+// Used for response payload
 export const CoffeeSchema = CoffeeBaseSchema.extend({
   id: z.number(),
   createdAt: z.date(),
@@ -17,32 +22,16 @@ export const CoffeeSchema = CoffeeBaseSchema.extend({
 });
 export type Coffee = z.infer<typeof CoffeeSchema>;
 
-// 3. Request DTOs (Zod obj entity + Shape)
+// Request body payload (Zod obj entity + Shape Type)
+// Create
 export const CreateCoffeeSchema = CoffeeBaseSchema;
 export type CreateCoffeeRequest = z.infer<typeof CreateCoffeeSchema>;
-
-export const ViewCoffeeSchema = CoffeeBaseSchema;
-export type ViewCoffeeRequest = z.infer<typeof ViewCoffeeSchema>;
-
+// Update
 export const UpdateCoffeeSchema = CoffeeBaseSchema.partial();
 export type UpdateCoffeeRequest = z.infer<typeof UpdateCoffeeSchema>;
 
-// 4. Response schemas using generic response wrapper (Zod obj entity + Shape)
-export const UpdateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
-export type UpdateCoffeeResponse = z.infer<typeof UpdateCoffeeResponseSchema>;
-
-export const CreateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
-export type CreateCoffeeResponse = z.infer<typeof CreateCoffeeResponseSchema>;
-
-export const ViewCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
-export type ViewCoffeeResponse = z.infer<typeof ViewCoffeeResponseSchema>;
-
-export const ListCoffeesResponseSchema = SuccessResponseSchema(
-  z.array(CoffeeSchema),
-);
-export type ListCoffeesResponse = z.infer<typeof ListCoffeesResponseSchema>;
-
-// 5. Request Param query (Zod obj entity + Shape)
+// Request param payload (Zod obj entity + Shape Type)
+// Param query
 export const CoffeeIdParamSchema = z.object({
   id: z
     .string()
@@ -50,3 +39,22 @@ export const CoffeeIdParamSchema = z.object({
     .transform(Number),
 });
 export type CoffeeIdParams = z.infer<typeof CoffeeIdParamSchema>;
+
+// Response (Zod obj entity + Shape Type)
+// Create
+export const CreateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
+export type CreateCoffeeResponse = z.infer<typeof CreateCoffeeResponseSchema>;
+// Update
+export const UpdateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
+export type UpdateCoffeeResponse = z.infer<typeof UpdateCoffeeResponseSchema>;
+// View
+export const ViewCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
+export type ViewCoffeeResponse = z.infer<typeof ViewCoffeeResponseSchema>;
+// List
+export const ListCoffeesResponseSchema = SuccessResponseSchema(
+  z.array(CoffeeSchema),
+);
+export type ListCoffeesResponse = z.infer<typeof ListCoffeesResponseSchema>;
+// Delete
+export const DeleteCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
+export type DeleteCoffeeResponse = z.infer<typeof DeleteCoffeeResponseSchema>;

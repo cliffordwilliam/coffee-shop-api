@@ -3,25 +3,30 @@
 import { prisma } from "@/lib/prisma";
 import { CreateCoffeeRequest, UpdateCoffeeRequest } from "./coffee.schema";
 
-export const getAllCoffees = () => {
-  return prisma.coffee.findMany();
+// Use prisma to find many
+export const getAllCoffees = async () => {
+  return await prisma.coffee.findMany();
 };
 
-export const getCoffeeById = (id: number) => {
-  return prisma.coffee.findUnique({ where: { id } });
+// Use prisma to find one
+export const getCoffeeById = async (id: number) => {
+  return await prisma.coffee.findUnique({ where: { id } });
 };
 
-export const createCoffee = (data: CreateCoffeeRequest) => {
-  return prisma.coffee.create({ data });
+// Use prisma to create
+export const createCoffee = async (data: CreateCoffeeRequest) => {
+  return await prisma.coffee.create({ data });
 };
 
-export const updateCoffee = (id: number, data: UpdateCoffeeRequest) => {
-  return prisma.coffee.update({
+// Use prisma to patch
+export const updateCoffee = async (id: number, data: UpdateCoffeeRequest) => {
+  return await prisma.coffee.update({
     where: { id },
     data,
   });
 };
 
-export const deleteCoffee = (id: number) => {
-  return prisma.coffee.delete({ where: { id } });
+// Use prisma to delete one
+export const deleteCoffee = async (id: number) => {
+  return await prisma.coffee.delete({ where: { id } });
 };
