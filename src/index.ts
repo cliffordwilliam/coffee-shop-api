@@ -6,13 +6,14 @@ import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
 const PORT = env.port;
 
+// Parse JSON payload input into req.body
 app.use(express.json());
 
-// Prefix
+// Modules
 const apiRouter = express.Router();
 apiRouter.use("/coffee", coffeeRoutes);
 
-// Modules
+// Prefix
 app.use(env.apiPrefix, apiRouter);
 
 // Catch all thrown error
