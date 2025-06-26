@@ -28,6 +28,9 @@ export const UpdateCoffeeSchema = CoffeeBaseSchema.partial();
 export type UpdateCoffeeRequest = z.infer<typeof UpdateCoffeeSchema>;
 
 // 4. Response schemas using generic response wrapper (Zod obj entity + Shape)
+export const UpdateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
+export type UpdateCoffeeResponse = z.infer<typeof UpdateCoffeeResponseSchema>;
+
 export const CreateCoffeeResponseSchema = SuccessResponseSchema(CoffeeSchema);
 export type CreateCoffeeResponse = z.infer<typeof CreateCoffeeResponseSchema>;
 

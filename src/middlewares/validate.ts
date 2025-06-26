@@ -1,27 +1,30 @@
-// src/middlewares/validate.ts
+import { RequestHandler } from "express";
+import { ZodError, z } from "zod";
 
-import { NextFunction, Request, Response } from "express";
-import { ZodSchema, ZodError } from "zod";
-
-// For codebase to use to validate req body payload input against zod obj dto
-export const validateBody =
-  (schema: ZodSchema) => (req: Request, _res: Response, next: NextFunction) => {
+// Generic middleware to validate and type req.body
+export const validateBody = <T extends z.ZodTypeAny>(
+  schema: T,
+): RequestHandler<{}, any, z.infer<T>> => {
+  return (req, _res, next) => {
     const result = schema.safeParse(req.body);
     if (!result.success) {
-      // Throw this Zod error entity for global error handler
       return next(new ZodError(result.error.errors));
     }
-    // Replace body with parsed (and possibly transformed) data
     req.body = result.data;
     next();
   };
+};
 
-export const validateParams =
-  (schema: ZodSchema) => (req: Request, _res: Response, next: NextFunction) => {
+// Generic middleware to validate and type req.params
+export const validateParams = <T extends z.ZodTypeAny>(
+  schema: T,
+): RequestHandler<z.infer<T>> => {
+  return (req, _res, next) => {
     const result = schema.safeParse(req.params);
     if (!result.success) {
       return next(new ZodError(result.error.errors));
     }
-    req.params = result.data; // safe and optionally transformed
+    req.params = result.data;
     next();
   };
+};
