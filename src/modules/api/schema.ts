@@ -1,10 +1,10 @@
 // src/modules/api/types.ts
 
-// This file defines API error response and success response shapes
-
+// This file defines API error response and success response (Shapes + Zod obj entity)
+import { z } from "zod";
 import type { ErrorCodeValue } from "./errorCodes";
 
-// This is my shape for error response
+// This is my shape for error response (Shapes + Zod obj entity)
 export type ErrorResponse = {
   success: false; // Bool for easy to see that it failed
   error: {
@@ -13,10 +13,30 @@ export type ErrorResponse = {
     details?: unknown; // Optional. Meta of any shape, list, string, whatever, good for extra meta when needed ({field: name, message: ...}).
   };
 };
+export const ErrorResponseSchema = z.object({
+  success: z.literal(false),
+  error: z.object({
+    message: z.string(),
+    code: z.string().optional(),
+    details: z.unknown().optional(),
+  }),
+});
 
-// This is my shape for success response
+// This is my shape for success response (Shapes + Zod obj entity)
 export type SuccessResponse<T = unknown, M = Record<string, any>> = {
   success: true; // Bool for easy to see that it succeed
   data: T; // Whatever obj entity to be sent back
   meta?: M; // Whatever meta shape, list, string, good for extra meta (pagination)
 };
+export const SuccessResponseSchema = <
+  T extends z.ZodTypeAny,
+  M extends z.ZodTypeAny = z.ZodTypeAny,
+>(
+  data: T,
+  meta?: M,
+) =>
+  z.object({
+    success: z.literal(true),
+    data,
+    ...(meta ? { meta } : {}),
+  });

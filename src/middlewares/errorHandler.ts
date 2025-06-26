@@ -3,7 +3,7 @@ import { ERROR_CODES } from "@/modules/api/errorCodes";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
-import type { ErrorResponse } from "@/modules/api/types";
+import type { ErrorResponse } from "@/modules/api/schema";
 
 // App level error catcher from whoever inside app that threw it
 export function errorHandler(

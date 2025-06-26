@@ -2,15 +2,32 @@
 
 import { Router } from "express";
 import * as coffeeController from "./coffee.controller";
-import { validate } from "@/middlewares/validate";
-import { CreateCoffeeSchema, UpdateCoffeeSchema } from "./coffee.model";
+import { validateBody, validateParams } from "@/middlewares/validate";
+import {
+  CreateCoffeeSchema,
+  UpdateCoffeeSchema,
+  CoffeeIdParamSchema,
+} from "./coffee.schema";
 
 const router = Router();
 
 router.get("/", coffeeController.getAll);
-router.get("/:id", coffeeController.getById);
-router.post("/", validate(CreateCoffeeSchema), coffeeController.create);
-router.put("/:id", validate(UpdateCoffeeSchema), coffeeController.update);
-router.delete("/:id", coffeeController.remove);
+router.get(
+  "/:id",
+  validateParams(CoffeeIdParamSchema),
+  coffeeController.getById,
+);
+router.post("/", validateBody(CreateCoffeeSchema), coffeeController.create);
+router.put(
+  "/:id",
+  validateParams(CoffeeIdParamSchema),
+  validateBody(UpdateCoffeeSchema),
+  coffeeController.update,
+);
+router.delete(
+  "/:id",
+  validateParams(CoffeeIdParamSchema),
+  coffeeController.remove,
+);
 
 export default router;
