@@ -1,22 +1,35 @@
 #!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Color codes
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m' # No Color
 
 # Helpers
 exit_helper() {
     local exit_message="$1"
     local exit_code="$2"
-    echo "ℹ️  Exiting..."
-    echo "$exit_message"
+    printf "${YELLOW}ℹ️  Exiting...${NC}\n"
+    if [ "$exit_code" -eq 0 ]; then
+        printf "${GREEN}%s${NC}\n" "$exit_message"
+    else
+        printf "${RED}%s${NC}\n" "$exit_message"
+    fi
     exit "$exit_code"
 }
 
 exit_on_lie() {
     local action_name="$1"
     local condition="$2"
-    echo "🔍 Statement: $action_name"
+    printf "${YELLOW}🔍 %-15s${NC} %s\n" "Statement:" "$action_name"
     if ! eval "$condition"; then
-        exit_helper "❌ Lie: $action_name" 1
+        printf "${RED}❌ %-15s${NC}\n" "Lie"
+        exit_helper "Lie: $action_name" 1
     fi
-    echo "✅ True: $action_name"
+    printf "${GREEN}✅ %-15s${NC}\n" "True"
 }
 
 print_banner() {
@@ -53,12 +66,31 @@ set -a
 source .env
 set +a
 
+print_banner "Validating .env Variables"
+
+# Basic validations
+exit_on_lie "NVM_DIR is set and is a valid directory" '[ -d "$NVM_DIR" ]'
+exit_on_lie "NODE_REQUIRED_MAJOR is a valid number" '[[ "$NODE_REQUIRED_MAJOR" =~ ^[0-9]+$ ]]'
+exit_on_lie "DBMS_CONTAINER_NAME is set" '[ -n "$DBMS_CONTAINER_NAME" ]'
+exit_on_lie "REGULAR_YAML file is set and exists" '[ -f "$REGULAR_YAML" ]'
+exit_on_lie "DB_USER (PostgreSQL user) is set" '[ -n "$DB_USER" ]'
+exit_on_lie "MAX_RETRIES is a valid number" '[[ "$MAX_RETRIES" =~ ^[0-9]+$ ]]'
+exit_on_lie "PORT is a valid port number" '[[ "$PORT" =~ ^[0-9]+$ && "$PORT" -ge 1 && "$PORT" -le 65535 ]]'
+exit_on_lie "API_PREFIX is set and starts with '/'" '[[ "$API_PREFIX" == /* ]]'
+
+# Prisma
+exit_on_lie "PRISMA_SEED_FILE_PATH exists" '[ -f "$PRISMA_SEED_FILE_PATH" ]'
+exit_on_lie "PRISMA_SEED_SCRIPT_NAME is set" '[ -n "$PRISMA_SEED_SCRIPT_NAME" ]'
+
+# package.json scripts
+exit_on_lie "PACKAGE_JSON_DEV_SCRIPT_NAME is set" '[ -n "$PACKAGE_JSON_DEV_SCRIPT_NAME" ]'
+
 # Constants
 NVM_DIR="$NVM_DIR"
 NODE_REQUIRED_MAJOR=${NODE_REQUIRED_MAJOR}
 DBMS_CONTAINER_NAME="${DBMS_CONTAINER_NAME}"
-DOCKER_COMPOSE_FILE="${REGULAR_YAML}"
-POSTGRES_USER="${DB_USER}"
+REGULAR_YAML="${REGULAR_YAML}"
+DB_USER="${DB_USER}"
 IS_CONTAINER_MADE=false
 MAX_RETRIES=${MAX_RETRIES}
 
@@ -67,7 +99,6 @@ wait_for_ready() {
   local cmd="$2"
   local retries=0
   local max_retries="${3:-$MAX_RETRIES}"
-
   until eval "$cmd"; do
     if [ "$retries" -ge "$max_retries" ]; then
       exit_helper "❌ $name did not become ready in time." 1
@@ -76,7 +107,6 @@ wait_for_ready() {
     retries=$((retries+1))
     sleep 1
   done
-
   echo "✅ $name is ready!"
 }
 
@@ -126,7 +156,7 @@ cleanup() {
 }
 
 # Cleanup on these signals
-trap 'cleanup; exit $?' SIGINT SIGTERM EXIT
+trap 'cleanup; exit $?' SIGINT SIGTERM EXIT ERR
 
 # Mark prerequisite checks
 print_banner "Checking Prerequisites"
@@ -151,12 +181,13 @@ fi
 echo "✅ Node.js version is above v$NODE_REQUIRED_MAJOR: $(node -v)"
 
 # NVM
-exit_on_lie "NVM installed at \$NVM_DIR" "[ -f \"$NVM_DIR/nvm.sh\" ]"
+exit_on_lie "NVM installed at $NVM_DIR" "[ -f \"$NVM_DIR/nvm.sh\" ]"
 echo "ℹ️  Sourcing NVM command..."
 source "$NVM_DIR/nvm.sh"
 exit_on_lie "NVM command is found after sourcing" "command -v nvm >/dev/null 2>&1"
 exit_on_lie "Connected to the internet" "curl -s --head https://registry.npmjs.org | grep HTTP >/dev/null"
-exit_on_lie "Node.js v$NODE_REQUIRED_MAJOR is installed" "nvm install "$NODE_REQUIRED_MAJOR""
+nvm install "$NODE_REQUIRED_MAJOR"
+exit_on_lie "nvm install succeeded" "[ $? -eq 0 ]"
 exit_on_lie "Switched to Node.js v$NODE_REQUIRED_MAJOR" "nvm use "$NODE_REQUIRED_MAJOR""
 
 # npm
@@ -170,10 +201,10 @@ print_banner "Starting DBMS container & Prisma"
 
 # Database container
 exit_on_lie "No existing '${DBMS_CONTAINER_NAME}' DBMS container found" "! docker container inspect \"$DBMS_CONTAINER_NAME\" >/dev/null 2>&1"
-exit_on_lie "${DOCKER_COMPOSE_FILE}' exists" "[ -f "$DOCKER_COMPOSE_FILE" ]"
-exit_on_lie "Docker compose is up" "docker compose -f "$DOCKER_COMPOSE_FILE" up -d --remove-orphans"
+exit_on_lie "${REGULAR_YAML} exists" "[ -f "$REGULAR_YAML" ]"
+exit_on_lie "Docker compose is up" "docker compose -f "$REGULAR_YAML" up -d --remove-orphans"
 IS_CONTAINER_MADE=true
-wait_for_ready "PostgreSQL" "docker exec $DBMS_CONTAINER_NAME pg_isready -U $POSTGRES_USER"
+wait_for_ready "PostgreSQL" "docker exec $DBMS_CONTAINER_NAME pg_isready -U $DB_USER"
 echo "✅ PostgreSQL is ready."
 
 # Prisma
