@@ -220,6 +220,10 @@ project-root/
 │
 │   └── utils/                  # Utility functions
 │       └── validateResponse.ts # Validates outgoing API responses using Zod
+│
+├── postman/                    # Postman collections & envs
+│   ├── coffee-shop-api.postman_collection.json      # Exported API collection (v2.1 format)
+│   └── dev.postman_environment.json                 # Environment vars (e.g., base_url)
 ```
 
 ---
@@ -232,6 +236,26 @@ Interactive API documentation is available at:
 🔗 Base URL: http://localhost:3000
 
 > The documentation is powered by Swagger UI and generated from an OpenAPI specification located in `docs/openapi.yaml`.
+
+---
+
+## 🧪 Postman API Collection
+
+You can test this API using the included Postman collection:
+
+### 📂 Files
+
+- `postman/coffee-shop-api.postman_collection.json`: Contains all endpoint definitions
+- `postman/dev.postman_environment.json`: Contains environment variables like `base_url`
+
+### 🚀 Getting Started
+
+1. Open Postman and import the collection file.
+2. Import the environment file and select it as active.
+3. Start the backend server using one of the setup scripts.
+4. Run or test individual requests.
+
+> The `{{base_url}}` variable is set to `http://localhost:3000/api/v1`
 
 ---
 
