@@ -10,6 +10,7 @@
   "description": "The Coffee Shop API is a backend project built with TypeScript and Express.js, developed for my portfolio. It demonstrates my understanding of building modern backend applications using a relational database, Docker, and code-first ORM practices. This project serves as a solid foundation for scaling into more complex systems.",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "test": "jest",
     "prepare": "husky"
   },
   "repository": {
