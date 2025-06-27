@@ -17,8 +17,8 @@ router.get("/:id", validateParams(IdParamSchema), coffeeController.getById);
 // Handle POST
 router.post("/", validateBody(CreateCoffeeSchema), coffeeController.create);
 
-// Handle PUT
-router.put(
+// Handle PATCH
+router.patch(
   "/:id",
   validateParams(IdParamSchema),
   validateBody(UpdateCoffeeSchema),

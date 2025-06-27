@@ -7,7 +7,7 @@ import { SuccessResponseSchema } from "@/modules/api/schema";
 // Used for input payload (POST, PUT, ...)
 export const CoffeeBaseSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().optional(),
+  description: z.string().max(255).optional(),
   price: z.number().positive("Price must be positive"),
 });
 

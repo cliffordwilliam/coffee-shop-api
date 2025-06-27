@@ -1,7 +1,7 @@
 // This file defines type shapes and zods for error res and success res
 
 import { z } from "zod";
-import type { ErrorCodeValue } from "./errorCodes";
+import { ErrorCodeEnum, type ErrorCodeValue } from "./errorCodes";
 
 // This is my type shape for error response
 export type ErrorResponse = {
@@ -17,7 +17,7 @@ export const ErrorResponseSchema = z.object({
   success: z.literal(false),
   error: z.object({
     message: z.string(),
-    code: z.string().optional(),
+    code: ErrorCodeEnum.optional(),
     details: z.unknown().optional(),
   }),
 });

@@ -5,8 +5,10 @@ import { z } from "zod";
 export const IdParamSchema = z.object({
   id: z
     .string()
-    .regex(/^\d+$/, "ID must be a positive integer")
-    .transform(Number),
+    .transform(Number)
+    .refine((val) => Number.isInteger(val) && val > 0, {
+      message: "ID must be a positive integer",
+    }),
 });
 export type IdParam = z.infer<typeof IdParamSchema>;
 // Query String (req.query)
