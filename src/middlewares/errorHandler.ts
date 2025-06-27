@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
 import { ErrorResponseSchema, type ErrorResponse } from "@/modules/api/schema";
 import { validateResponse } from "@/utils/validateResponse";
+import { HTTP_STATUS } from "@/constants/http";
 
 // This file is the global error boundary
 
@@ -38,7 +39,7 @@ export function errorHandler(
       errorResponse,
     );
     // Give it to client
-    res.status(422).json(validErrorResponse);
+    res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json(validErrorResponse);
     // Quit early
     return;
   }
@@ -80,5 +81,5 @@ export function errorHandler(
     errorResponse,
   );
   // Give it to client
-  res.status(500).json(validErrorResponse);
+  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json(validErrorResponse);
 }

@@ -18,6 +18,7 @@ import {
 } from "./coffee.schema";
 import { validateResponse } from "@/utils/validateResponse";
 import { IdParam } from "../common/common.schema";
+import { HTTP_STATUS } from "@/constants/http";
 
 // This file takes in validated input from router, use service to talk to dbms, validate response before sending it back to client
 
@@ -35,7 +36,7 @@ export const getAll: RequestHandler<{}, ListCoffeesResponse, any> = async (
       data: coffees,
     },
   );
-  res.status(200).json(response);
+  res.status(HTTP_STATUS.OK).json(response);
 };
 
 // Path Parameter passed in here is validated
@@ -58,7 +59,7 @@ export const getById: RequestHandler<IdParam, ViewCoffeeResponse, any> = async (
       data: coffee,
     },
   );
-  res.status(200).json(response);
+  res.status(HTTP_STATUS.OK).json(response);
 };
 
 // Req body payload passed in here is validated
@@ -77,7 +78,7 @@ export const create: RequestHandler<
       data: newCoffee,
     },
   );
-  res.status(201).json(response);
+  res.status(HTTP_STATUS.CREATED).json(response);
 };
 
 // Path Parameter passed in here is validated
@@ -106,7 +107,7 @@ export const update: RequestHandler<
       data: updated,
     },
   );
-  res.status(200).json(response);
+  res.status(HTTP_STATUS.OK).json(response);
 };
 
 // Path Parameter passed in here is validated
@@ -131,5 +132,5 @@ export const remove: RequestHandler<
       data: deletedCoffee,
     },
   );
-  res.status(200).json(response);
+  res.status(HTTP_STATUS.OK).json(response);
 };

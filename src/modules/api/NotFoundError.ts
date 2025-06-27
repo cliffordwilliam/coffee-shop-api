@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from "@/constants/http";
 import { ApiError } from "./ApiError";
 import { ERROR_CODES } from "./errorCodes";
 
@@ -5,6 +6,6 @@ import { ERROR_CODES } from "./errorCodes";
 // Instance and throw it for any 404 in app errors
 export class NotFoundError extends ApiError {
   constructor(message = "Resource not found") {
-    super(message, 404, ERROR_CODES.RESOURCE_NOT_FOUND);
+    super(message, HTTP_STATUS.NOT_FOUND, ERROR_CODES.RESOURCE_NOT_FOUND);
   }
 }
