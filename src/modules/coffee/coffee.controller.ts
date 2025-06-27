@@ -1,10 +1,8 @@
-// src/modules/coffee/coffee.controller.ts
 import type { Coffee } from "@prisma/client";
 import { RequestHandler } from "express";
 import * as coffeeService from "./coffee.service";
 import { NotFoundError } from "@/modules/api/NotFoundError";
 import {
-  CoffeeIdParams,
   CreateCoffeeRequest,
   CreateCoffeeResponse,
   CreateCoffeeResponseSchema,
@@ -19,8 +17,12 @@ import {
   ViewCoffeeResponseSchema,
 } from "./coffee.schema";
 import { validateResponse } from "@/utils/validateResponse";
+import { IdParam } from "../common/common.schema";
 
-// Take query string pagination + filter for get all
+// This file takes in validated input from router, use service to talk to dbms, validate response before sending it back to client
+
+// Get all coffees with prisma
+// Use all coffees to make ListCoffeesResponse type shape and validate it before returning it to client
 export const getAll: RequestHandler<{}, ListCoffeesResponse, any> = async (
   _req,
   res,
@@ -36,14 +38,16 @@ export const getAll: RequestHandler<{}, ListCoffeesResponse, any> = async (
   res.status(200).json(response);
 };
 
-// Takes in validated coffee param query. Use it with service to get 1 coffee
-export const getById: RequestHandler<
-  CoffeeIdParams,
-  ViewCoffeeResponse,
-  any
-> = async (req, res) => {
-  const id = req.params.id;
-  const coffee: Coffee | null = await coffeeService.getCoffeeById(id);
+// Path Parameter passed in here is validated
+// Get one coffee with prisma
+// Use one coffee to make ViewCoffeesResponse type shape and validate it before returning it to client
+export const getById: RequestHandler<IdParam, ViewCoffeeResponse, any> = async (
+  req,
+  res,
+) => {
+  const coffee: Coffee | null = await coffeeService.getCoffeeById(
+    req.params.id,
+  );
   if (!coffee) {
     throw new NotFoundError("Coffee not found");
   }
@@ -57,7 +61,9 @@ export const getById: RequestHandler<
   res.status(200).json(response);
 };
 
-// Takes in validated coffee req body payload. Use it with service to make 1 new coffee
+// Req body payload passed in here is validated
+// Make one coffee with prisma
+// Use created one coffee to make CreateCoffeeResponse type shape and validate it before returning it to client
 export const create: RequestHandler<
   {},
   CreateCoffeeResponse,
@@ -74,18 +80,25 @@ export const create: RequestHandler<
   res.status(201).json(response);
 };
 
-// Takes in validated coffee req body payload. Use it with service to edit 1 new coffee
+// Path Parameter passed in here is validated
+// Req body payload passed in here is validated
+// Patch one coffee with prisma
+// Use patched one coffee to make UpdateCoffeeResponse type shape and validate it before returning it to client
 export const update: RequestHandler<
-  CoffeeIdParams,
+  IdParam,
   UpdateCoffeeResponse,
   UpdateCoffeeRequest
 > = async (req, res) => {
-  const id = req.params.id;
-  const coffee: Coffee | null = await coffeeService.getCoffeeById(id);
+  const coffee: Coffee | null = await coffeeService.getCoffeeById(
+    req.params.id,
+  );
   if (!coffee) {
     throw new NotFoundError("Coffee not found");
   }
-  const updated: Coffee = await coffeeService.updateCoffee(id, req.body);
+  const updated: Coffee = await coffeeService.updateCoffee(
+    req.params.id,
+    req.body,
+  );
   const response: UpdateCoffeeResponse = validateResponse(
     UpdateCoffeeResponseSchema,
     {
@@ -96,18 +109,21 @@ export const update: RequestHandler<
   res.status(200).json(response);
 };
 
-// Takes in validated coffee param query. Use it with service to delete 1 coffee
+// Path Parameter passed in here is validated
+// Delete one coffee with prisma
+// Use deleted one coffee to make DeleteCoffeeResponse type shape and validate it before returning it to client
 export const remove: RequestHandler<
-  CoffeeIdParams,
+  IdParam,
   DeleteCoffeeResponse,
   any
 > = async (req, res) => {
-  const id = req.params.id;
-  const coffee: Coffee | null = await coffeeService.getCoffeeById(id);
+  const coffee: Coffee | null = await coffeeService.getCoffeeById(
+    req.params.id,
+  );
   if (!coffee) {
     throw new NotFoundError("Coffee not found");
   }
-  const deletedCoffee: Coffee = await coffeeService.deleteCoffee(id);
+  const deletedCoffee: Coffee = await coffeeService.deleteCoffee(req.params.id);
   const response: DeleteCoffeeResponse = validateResponse(
     DeleteCoffeeResponseSchema,
     {

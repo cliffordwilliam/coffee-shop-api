@@ -1,6 +1,6 @@
-// src/errors/errorCodes.ts
+// This file defines my error codes tags used by other error classes
 
-// All error code tags, good for FE to consume
+// Tags are useful for FE, if its tag "A" then show toasts...
 export const ERROR_CODES = {
   RESOURCE_NOT_FOUND: "RESOURCE_NOT_FOUND",
   INVALID_RESOURCE_STATUS: "INVALID_RESOURCE_STATUS",
@@ -9,5 +9,5 @@ export const ERROR_CODES = {
   INTERNAL_ERROR: "INTERNAL_ERROR",
 } as const;
 
-export type ErrorCode = keyof typeof ERROR_CODES; // Autocompletion DX
-export type ErrorCodeValue = (typeof ERROR_CODES)[ErrorCode]; // Validate shape
+// Type shapes for all possible error tags
+export type ErrorCodeValue = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

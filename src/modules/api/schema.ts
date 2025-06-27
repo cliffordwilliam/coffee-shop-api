@@ -1,21 +1,18 @@
-// src/modules/api/types.ts
+// This file defines type shapes and zods for error res and success res
 
-// This file defines API error response and success response (Shapes + Zod obj entity)
 import { z } from "zod";
 import type { ErrorCodeValue } from "./errorCodes";
 
-// This is my shape for error response
-// Used for typing
+// This is my type shape for error response
 export type ErrorResponse = {
   success: false; // Bool for easy to see that it failed
   error: {
-    message: string; // Human-readable explanation of what went wrong (shown to client or logged, native JS Error prop).
-    code?: ErrorCodeValue; // Optional. Meant for frontend logic, say if its type A then show toast.
-    details?: unknown; // Optional. Meta of any shape, list, string, whatever, good for extra meta when needed ({field: name, message: ...}).
+    message: string; // Human-readable explanation of what went wrong, native JS Error prop.
+    code?: ErrorCodeValue; // Optional. Meant for frontend logic, say if its type "A" then show toast or something.
+    details?: unknown; // Optional. Think of it like state transition extra meta message, say validation error ({field: name, message: name required}).
   };
 };
-// This is the Zod obj entity for error response
-// Used for validation
+// Error response Zod
 export const ErrorResponseSchema = z.object({
   success: z.literal(false),
   error: z.object({
@@ -25,15 +22,13 @@ export const ErrorResponseSchema = z.object({
   }),
 });
 
-// This is my shape for success response
-// Used for typing
+// This is my type shape for success response
 export type SuccessResponse<T = unknown, M = Record<string, any>> = {
   success: true; // Bool for easy to see that it succeed
-  data: T; // Whatever obj entity to be sent back
-  meta?: M; // Whatever meta shape, list, string, good for extra meta (pagination)
+  data: T; // Whatever obj entity to be sent back, one coffee, list of coffees, ...
+  meta?: M; // Optional. Think of it like state transition extra meta message, say pagination extra meta (limit, offset, ...)
 };
-// This is the Zod obj entity for success response
-// Used for validation
+// Success response Zod
 export const SuccessResponseSchema = <
   T extends z.ZodTypeAny,
   M extends z.ZodTypeAny = z.ZodTypeAny,

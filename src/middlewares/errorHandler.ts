@@ -1,4 +1,3 @@
-// src/middlewares/errorHandler.ts
 import { ERROR_CODES } from "@/modules/api/errorCodes";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
@@ -6,7 +5,9 @@ import { ApiError } from "@/modules/api/ApiError";
 import { ErrorResponseSchema, type ErrorResponse } from "@/modules/api/schema";
 import { validateResponse } from "@/utils/validateResponse";
 
-// App level error catcher from whoever inside app that threw it
+// This file is the global error boundary
+
+// Global error boundary
 export function errorHandler(
   // All middleware needed passed parameters
   err: Error,
@@ -14,15 +15,15 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  // Catch error thrown by Zod (ZodError entity)
+  // Catch any Zod error class instances thrown by app
   if (err instanceof ZodError) {
-    // Build custom meta using Zod error list
+    // Make custom meta dict using Zod error class instance props
     const details = err.errors.map((e) => ({
       field: e.path.join("."),
       message: e.message,
       type: e.code,
     }));
-    // Use custom meta obj to make my ErrorResponse shape
+    // Use custom meta dict to make my ErrorResponse type shape
     const errorResponse: ErrorResponse = {
       success: false,
       error: {
@@ -31,18 +32,20 @@ export function errorHandler(
         details,
       },
     };
-    // Validate it before giving it to client
+    // Validate it with ErrorResponse Zod before giving it to client
     const validErrorResponse = validateResponse(
       ErrorResponseSchema,
       errorResponse,
     );
     // Give it to client
     res.status(422).json(validErrorResponse);
+    // Quit early
+    return;
   }
 
-  // Catch error thrown by this app (ApiError entity)
+  // Catch any of my custom ApiError class instances thrown by app
   if (err instanceof ApiError) {
-    // Use my custom ApiError entity obj to make my ErrorResponse shape
+    // Use my custom ApiError class instance props to make my ErrorResponse shape
     const errorResponse: ErrorResponse = {
       success: false,
       error: {
@@ -51,19 +54,19 @@ export function errorHandler(
         details: err.details,
       },
     };
-    // Validate it before giving it to client
+    // Validate it with ErrorResponse Zod before giving it to client
     const validErrorResponse = validateResponse(
       ErrorResponseSchema,
       errorResponse,
     );
     // Give it to client
     res.status(err.statusCode).json(validErrorResponse);
+    // Quit early
+    return;
   }
 
-  // Log unhandled errors thrown by unknown
-  console.error(err);
-  // Catch unhandled errors thrown by unknown
-  // Make my ErrorResponse shape
+  // Catch any unknown errors thrown by app
+  // Manually make my ErrorResponse shape here
   const errorResponse: ErrorResponse = {
     success: false,
     error: {
@@ -71,7 +74,7 @@ export function errorHandler(
       code: ERROR_CODES.INTERNAL_ERROR,
     },
   };
-  // Validate it before giving it to client
+  // Validate it with ErrorResponse Zod before giving it to client
   const validErrorResponse = validateResponse(
     ErrorResponseSchema,
     errorResponse,

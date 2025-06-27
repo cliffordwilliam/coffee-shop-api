@@ -1,13 +1,10 @@
-// src/modules/coffee/coffee.route.ts
-
 import { Router } from "express";
 import * as coffeeController from "./coffee.controller";
 import { validateBody, validateParams } from "@/middlewares/validate";
-import {
-  CreateCoffeeSchema,
-  UpdateCoffeeSchema,
-  CoffeeIdParamSchema,
-} from "./coffee.schema";
+import { CreateCoffeeSchema, UpdateCoffeeSchema } from "./coffee.schema";
+import { IdParamSchema } from "../common/common.schema";
+
+// This file defines route to handler binds, and also validates input payload
 
 const router = Router();
 
@@ -15,11 +12,7 @@ const router = Router();
 router.get("/", coffeeController.getAll);
 
 // Handle GET one
-router.get(
-  "/:id",
-  validateParams(CoffeeIdParamSchema),
-  coffeeController.getById,
-);
+router.get("/:id", validateParams(IdParamSchema), coffeeController.getById);
 
 // Handle POST
 router.post("/", validateBody(CreateCoffeeSchema), coffeeController.create);
@@ -27,16 +20,12 @@ router.post("/", validateBody(CreateCoffeeSchema), coffeeController.create);
 // Handle PUT
 router.put(
   "/:id",
-  validateParams(CoffeeIdParamSchema),
+  validateParams(IdParamSchema),
   validateBody(UpdateCoffeeSchema),
   coffeeController.update,
 );
 
 // Handle DELETE
-router.delete(
-  "/:id",
-  validateParams(CoffeeIdParamSchema),
-  coffeeController.remove,
-);
+router.delete("/:id", validateParams(IdParamSchema), coffeeController.remove);
 
 export default router;

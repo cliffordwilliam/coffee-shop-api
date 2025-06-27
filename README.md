@@ -39,22 +39,6 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 
 ### 👤 Docker Group Access (Linux users)
 
-> 🐧 **Heads up:**
-> This project assumes your user is in the `docker` group.
-
-The setup scripts (`./local-start-dev.sh` and `./local-start-dev-full.sh`) interact with Docker **without `sudo`**. However:
-
-- Running the script with `sudo` will break `nvm` (Node Version Manager)
-- Running Docker commands without being in the `docker` group may fail or prompt repeatedly
-
-To fix this:
-
-👉 [Follow Docker’s official post-install guide](https://docs.docker.com/engine/install/linux-postinstall/) to add your user to the `docker` group and restart your session.
-
-> ⚠️ **Security Note:** Adding a user to the `docker` group grants root-level access to your system. This is common in local dev environments, but use caution on shared or production machines.
-
-#### 👤 Docker Group Access
-
 > 🛑 **Linux users:**
 > This project assumes your user is in the `docker` group.
 
@@ -94,7 +78,7 @@ nvm use 20
 #### 🧪 Option 1: Run Locally (Node + Docker PostgreSQL)
 
 ```bash
-./local-start-dev.sh
+./local-start.sh
 ```
 
 This script will:
@@ -110,7 +94,7 @@ This script will:
 
 - Install Node.js dependencies via `npm install`
 
-- Start **PostgreSQL** using `docker-compose.dev.yaml`
+- Start **PostgreSQL** using `docker-compose.yaml`
 
 - Wait until PostgreSQL is ready to accept connections
 
@@ -121,7 +105,7 @@ This script will:
 
 - Start the dev server in the background: `npm run dev`
 
-> 🌐 Your API will be live at: [http://localhost:3000](http://localhost:3000)
+> 🌐 Script will print to terminal where your API will be live at
 
 > 🛑 Press `Ctrl + C` to stop the server and trigger automatic cleanup
 
@@ -130,7 +114,7 @@ This script will:
 #### 🐳 Option 2: Run Fully in Docker (App + PostgreSQL)
 
 ```bash
-./local-start-dev-full.sh
+./local-start-full.sh
 ```
 
 This script will:
@@ -142,7 +126,7 @@ This script will:
 
 - Auto-copy `.env.example` to `.env` if missing
 
-- Start **both** the app and database using `docker-compose.dev.full.yaml`
+- Start **both** the app and database using `docker-compose.full.yaml`
 
 - Wait until PostgreSQL is ready to accept connections
 
@@ -153,7 +137,7 @@ This script will:
 
 - Attach to container logs for live output
 
-> 🌐 Your API will be live at: [http://localhost:3000](http://localhost:3000)
+> 🌐 Script will print to terminal where your API will be live at
 
 > 🛑 Press `Ctrl + C` to stop containers and clean up resources
 
@@ -188,50 +172,54 @@ If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgA
 ## 📁 Project Structure
 
 ```
-src/                         # Main Express.js (TypeScript) application
-├── config/                  # Environment variable handling (dotenv validator, etc.)
-│   └── env.ts
-├── lib/                     # Shared service instances (e.g. Prisma, Redis, etc.)
-│   └── prisma.ts
-├── middlewares/             # Global/reusable Express middleware
-│   ├── errorHandler.ts          # Centralized error-handling middleware
-│   └── validate.ts              # Zod validation middleware
-├── modules/                 # Domain-driven feature modules (1 folder per domain/resource)
-│   ├── {module}/                # Replace with actual domain (e.g. coffee, user, order)
-│   │   ├── {module}.route.ts       # HTTP route definitions
-│   │   ├── {module}.controller.ts  # Request/response logic
-│   │   ├── {module}.service.ts     # Low-level DB logic (calls Prisma or other data sources)
-│   │   ├── {module}.model.ts       # Zod schemas, DTOs, and types
-│   │   └── useCases/               # Application logic coordinating services (business use cases)
-│   │       └── *.ts
-│   └── api/                     # Shared API concerns (errors, response types, etc.)
-│       ├── ApiError.ts             # Base custom error class
-│       ├── InvalidStatusError.ts   # Specific error: 400 Bad Request
-│       ├── NotFoundError.ts        # Specific error: 404 Not Found
-│       ├── errorCodes.ts           # Centralized error code constants
-│       └── types.ts                # API response types (SuccessResponse, ErrorResponse)
-└── index.ts                 # Application entry point (Express setup)
-```
-
-### Top-level Files
-
-```
-prisma/                      # Prisma schema, migrations, and seed scripts
-├── schema.prisma
-└── seed.ts
-
-generated/                   # Auto-generated Prisma client files
-
-.env.example                 # Sample env config for dev onboarding
-Dockerfile.dev               # Dockerfile for local dev environment
-docker-compose.dev.yaml      # PostgreSQL container only
-docker-compose.dev.full.yaml # Full stack: App + DB
-
-local-start-dev.sh           # Starts local app with Dockerized DB
-local-start-dev-full.sh      # Starts app + DB in Docker
-README.md                    # Project documentation
-package.json                 # NPM metadata and scripts
-tsconfig.json                # TypeScript config
+project-root/
+├── docker-compose.yaml         # Basic Docker Compose setup (DB Container)
+├── docker-compose.full.yaml    # Full Docker Compose setup (API BE App and DB Container)
+├── Dockerfile                  # Docker image definition for the API BE App
+│
+├── local-start.sh              # Script to start the DB Container
+├── local-start-full.sh         # Script to start the DB Container and the BE App Container
+│
+├── package.json                # NPM project configuration and scripts
+├── package-lock.json           # Exact dependency versions for reproducible installs
+├── tsconfig.json               # TypeScript compiler configuration
+├── README.md                   # Project documentation
+│
+├── prisma/                     # Prisma schema and seed data
+│   ├── schema.prisma           # Prisma database schema
+│   └── seed.ts                 # Seed script for populating initial data
+│
+├── generated/                  # Auto-generated code
+│   └── prisma/                 # Prisma client code (after `prisma generate`)
+│
+├── src/                        # Application source code
+│   ├── index.ts                # Application entry point
+│
+│   ├── config/                 # Configuration-related files
+│   │   └── env.ts              # Loads and validates environment variables
+│
+│   ├── lib/                    # Shared libraries
+│   │   └── prisma.ts           # Singleton Prisma client instance
+│
+│   ├── middlewares/            # Express middlewares
+│   │   ├── errorHandler.ts     # Global error handler for API BE App
+│   │   └── validate.ts         # Input payload request validation middleware using Zod
+│
+│   ├── modules/                # Feature modules (grouped by domain)
+│   │   ├── api/                    # Shared API logic and errors
+│   │   │   ├── ApiError.ts             # Error base class (throw these class instances as error)
+│   │   │   ├── errorCodes.ts           # Error codes for error class
+│   │   │   ├── InvalidStatusError.ts   # Error class for invalid status
+│   │   │   ├── NotFoundError.ts        # Error class for 404 responses
+│   │   │   └── schema.ts               # Types and Zods for success and error response
+│   │   └── {module}/               # Feature-specific module (e.g., coffee)
+│   │       ├── {module}.controller.ts  # Route handlers, validates output
+│   │       ├── {module}.route.ts       # Route definitions, validates input payload
+│   │       ├── {module}.schema.ts      # Types and Zods for response and request
+│   │       └── {module}.service.ts     # Business logic and DB interaction
+│
+│   └── utils/                  # Utility functions
+│       └── validateResponse.ts # Validates outgoing API responses using Zod
 ```
 
 ---

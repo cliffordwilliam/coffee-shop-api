@@ -1,10 +1,12 @@
 import { RequestHandler } from "express";
 import { ZodError, z } from "zod";
 
-// Middleware to validate and type shape req.body
+// This file defines middleware to validate input payload
+
+// Middleware to validate req.body
 // Takes in any Zod obj type shape
-// Return explicit inferred body shape
-// If invalid, throw my custom Zod error obj entity
+// Takes in any body (req.body) type shape
+// If invalid, throw Zod error class instance
 // If valid, continue with inferred req body type shape
 export const validateBody = <T extends z.ZodTypeAny>(
   schema: T,
@@ -19,14 +21,14 @@ export const validateBody = <T extends z.ZodTypeAny>(
   };
 };
 
-// Middleware to validate and type shape req.params
+// Middleware to validate req.params
 // Takes in any Zod obj type shape
-// Return explicit inferred param query shape
-// If invalid, throw my custom Zod error obj entity
+// Takes in any param query (req.params) type shape
+// If invalid, throw Zod error class instance
 // If valid, continue with inferred param query type shape
 export const validateParams = <T extends z.ZodTypeAny>(
   schema: T,
-): RequestHandler<z.infer<T>> => {
+): RequestHandler<z.infer<T>, any, any> => {
   return (req, _res, next) => {
     const result = schema.safeParse(req.params);
     if (!result.success) {

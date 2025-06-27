@@ -1,7 +1,7 @@
-// src/modules/coffee/coffee.service.ts
-
 import { prisma } from "@/lib/prisma";
 import { CreateCoffeeRequest, UpdateCoffeeRequest } from "./coffee.schema";
+
+// This file uses prisma to get data
 
 // Use prisma to find many
 export const getAllCoffees = async () => {
