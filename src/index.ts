@@ -2,9 +2,13 @@ import { env } from "./config/env";
 import express from "express";
 import coffeeRoutes from "./modules/coffee/coffee.route";
 import { errorHandler } from "./middlewares/errorHandler";
+import cors from "cors";
 
 const app = express();
 const PORT = env.port;
+
+// Allow all origins
+app.use(cors());
 
 // Parse JSON payload input into req.body
 app.use(express.json());
