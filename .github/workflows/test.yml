@@ -2,7 +2,7 @@
 name: Run Tests
 on: [push, pull_request] # On these events, run these jobs
 jobs:
-  format-prettier-action:
+  jest-tests-action:
     runs-on: ubuntu-latest
 
     steps:
