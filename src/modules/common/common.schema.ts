@@ -27,3 +27,14 @@ export const PaginationQuerySchema = z.object({
     .default("10"),
 });
 export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
+
+// Response (Zod + Type shape)
+// Pagination meta
+export const PaginationMetaSchema = z.object({
+  pagination: z.object({
+    page: z.number().int().min(1),
+    size: z.number().int().min(1),
+    total: z.number().int().min(0),
+  }),
+});
+export type PaginationMeta = z.infer<typeof PaginationMetaSchema>;
