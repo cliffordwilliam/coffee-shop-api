@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SuccessResponseSchema } from "@/modules/api/schema";
+import { PaginationMetaSchema } from "../common/common.schema";
 
 // This file defines Zod and type shape of coffee requests and responses
 
@@ -40,6 +41,7 @@ export type ViewCoffeeResponse = z.infer<typeof ViewCoffeeResponseSchema>;
 // List
 export const ListCoffeesResponseSchema = SuccessResponseSchema(
   z.array(CoffeeSchema),
+  PaginationMetaSchema,
 );
 export type ListCoffeesResponse = z.infer<typeof ListCoffeesResponseSchema>;
 // Delete

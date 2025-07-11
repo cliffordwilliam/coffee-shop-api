@@ -4,8 +4,14 @@ import { CreateCoffeeRequest, UpdateCoffeeRequest } from "./coffee.schema";
 // This file uses prisma to get data
 
 // Use prisma to find many
-export const getAllCoffees = async () => {
-  return await prisma.coffee.findMany();
+export const getAllCoffees = async (page: number, limit: number) => {
+  return await prisma.$transaction([
+    prisma.coffee.count(),
+    prisma.coffee.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
 };
 
 // Use prisma to find one

@@ -17,8 +17,9 @@ import {
   ViewCoffeeResponseSchema,
 } from "./coffee.schema";
 import { validateResponse } from "@/utils/validateResponse";
-import { IdParam } from "../common/common.schema";
+import { IdParam, PaginationQuery } from "../common/common.schema";
 import { HTTP_STATUS } from "@/constants/http";
+import { ValidatedRequest } from "@/middlewares/validate";
 
 // This file takes in validated input from router, use service to talk to dbms, validate response before sending it back to client
 
@@ -27,14 +28,25 @@ import { HTTP_STATUS } from "@/constants/http";
 export const getAll: RequestHandler<
   Record<string, never>, // Params
   ListCoffeesResponse, // Response body
-  unknown // Request body (unused)
-> = async (_req, res) => {
-  const coffees: Coffee[] = await coffeeService.getAllCoffees();
+  unknown, // Request body (unused)
+  unknown // Query
+> = async (req, res) => {
+  const { page, limit } = (req as unknown as ValidatedRequest<PaginationQuery>)
+    .validatedQuery;
+  const [total, coffees]: [number, Coffee[]] =
+    await coffeeService.getAllCoffees(page, limit);
   const response: ListCoffeesResponse = validateResponse(
     ListCoffeesResponseSchema,
     {
       success: true,
       data: coffees,
+      meta: {
+        pagination: {
+          page,
+          size: limit,
+          total: total,
+        },
+      },
     },
   );
   res.status(HTTP_STATUS.OK).json(response);

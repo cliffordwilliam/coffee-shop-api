@@ -1,15 +1,19 @@
 import { Router } from "express";
 import * as coffeeController from "./coffee.controller";
-import { validateBody, validateParams } from "@/middlewares/validate";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "@/middlewares/validate";
 import { CreateCoffeeSchema, UpdateCoffeeSchema } from "./coffee.schema";
-import { IdParamSchema } from "../common/common.schema";
+import { IdParamSchema, PaginationQuerySchema } from "../common/common.schema";
 
 // This file defines route to handler binds, and also validates input payload
 
 const router = Router();
 
 // Handle GET all
-router.get("/", coffeeController.getAll);
+router.get("/", validateQuery(PaginationQuerySchema), coffeeController.getAll);
 
 // Handle GET one
 router.get("/:id", validateParams(IdParamSchema), coffeeController.getById);
