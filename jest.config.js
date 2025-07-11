@@ -14,4 +14,5 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
+  coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/generated/"],
 };
