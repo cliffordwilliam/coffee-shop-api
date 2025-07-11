@@ -143,6 +143,16 @@ This script will:
 
 ---
 
+### 🧪 Unit Test
+
+Run unit tests with coverage:
+
+```sh
+npm test
+```
+
+---
+
 ## 🛢 Database Access
 
 If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgAdmin, or Postico), you can connect using:
