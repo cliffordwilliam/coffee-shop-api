@@ -24,10 +24,11 @@ import { HTTP_STATUS } from "@/constants/http";
 
 // Get all coffees with prisma
 // Use all coffees to make ListCoffeesResponse type shape and validate it before returning it to client
-export const getAll: RequestHandler<{}, ListCoffeesResponse, any> = async (
-  _req,
-  res,
-) => {
+export const getAll: RequestHandler<
+  Record<string, never>, // Params
+  ListCoffeesResponse, // Response body
+  unknown // Request body (unused)
+> = async (_req, res) => {
   const coffees: Coffee[] = await coffeeService.getAllCoffees();
   const response: ListCoffeesResponse = validateResponse(
     ListCoffeesResponseSchema,
@@ -42,10 +43,11 @@ export const getAll: RequestHandler<{}, ListCoffeesResponse, any> = async (
 // Path Parameter passed in here is validated
 // Get one coffee with prisma
 // Use one coffee to make ViewCoffeesResponse type shape and validate it before returning it to client
-export const getById: RequestHandler<IdParam, ViewCoffeeResponse, any> = async (
-  req,
-  res,
-) => {
+export const getById: RequestHandler<
+  IdParam,
+  ViewCoffeeResponse,
+  unknown
+> = async (req, res) => {
   const coffee: Coffee | null = await coffeeService.getCoffeeById(
     req.params.id,
   );
@@ -66,7 +68,7 @@ export const getById: RequestHandler<IdParam, ViewCoffeeResponse, any> = async (
 // Make one coffee with prisma
 // Use created one coffee to make CreateCoffeeResponse type shape and validate it before returning it to client
 export const create: RequestHandler<
-  {},
+  Record<string, never>,
   CreateCoffeeResponse,
   CreateCoffeeRequest
 > = async (req, res) => {
@@ -116,7 +118,7 @@ export const update: RequestHandler<
 export const remove: RequestHandler<
   IdParam,
   DeleteCoffeeResponse,
-  any
+  unknown
 > = async (req, res) => {
   const coffee: Coffee | null = await coffeeService.getCoffeeById(
     req.params.id,

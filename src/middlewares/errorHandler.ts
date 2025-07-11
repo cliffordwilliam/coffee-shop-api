@@ -1,5 +1,5 @@
 import { ERROR_CODES } from "@/modules/api/errorCodes";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
 import { ErrorResponseSchema, type ErrorResponse } from "@/modules/api/schema";
@@ -14,7 +14,6 @@ export function errorHandler(
   err: Error,
   _req: Request,
   res: Response,
-  _next: NextFunction,
 ) {
   // Catch any Zod error class instances thrown by app
   if (err instanceof ZodError) {

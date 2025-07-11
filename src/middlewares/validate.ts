@@ -10,7 +10,7 @@ import { ZodError, z } from "zod";
 // If valid, continue with inferred req body type shape
 export const validateBody = <T extends z.ZodTypeAny>(
   schema: T,
-): RequestHandler<{}, any, z.infer<T>> => {
+): RequestHandler<unknown, unknown, z.infer<T>> => {
   return (req, _res, next) => {
     const result = schema.safeParse(req.body);
     if (!result.success) {
@@ -46,7 +46,7 @@ export const validateParams = <T extends z.ZodTypeAny>(
 // If valid, continue with inferred Query String type shape
 export const validateQuery = <T extends z.ZodTypeAny>(
   schema: T,
-): RequestHandler<any, any, any, z.infer<T>> => {
+): RequestHandler<unknown, unknown, unknown, z.infer<T>> => {
   return (req, _res, next) => {
     const result = schema.safeParse(req.query);
     if (!result.success) {

@@ -4,14 +4,14 @@ import { z } from "zod";
 import { ErrorCodeEnum, type ErrorCodeValue } from "./errorCodes";
 
 // This is my type shape for error response
-export type ErrorResponse = {
+export interface ErrorResponse {
   success: false; // Bool for easy to see that it failed
   error: {
     message: string; // Human-readable explanation of what went wrong, native JS Error prop.
     code?: ErrorCodeValue; // Optional. Meant for frontend logic, say if its type "A" then show toast or something.
     details?: unknown; // Optional. Think of it like state transition extra meta message, say validation error ({field: name, message: name required}).
   };
-};
+}
 // Error response Zod
 export const ErrorResponseSchema = z.object({
   success: z.literal(false),
@@ -23,11 +23,11 @@ export const ErrorResponseSchema = z.object({
 });
 
 // This is my type shape for success response
-export type SuccessResponse<T = unknown, M = Record<string, any>> = {
+export interface SuccessResponse<T = unknown, M = Record<string, unknown>> {
   success: true; // Bool for easy to see that it succeed
   data: T; // Whatever obj entity to be sent back, one coffee, list of coffees, ...
   meta?: M; // Optional. Think of it like state transition extra meta message, say pagination extra meta (limit, offset, ...)
-};
+}
 // Success response Zod
 export const SuccessResponseSchema = <
   T extends z.ZodTypeAny,
