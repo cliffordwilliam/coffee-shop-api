@@ -39,6 +39,13 @@ export const validateParams = <T extends z.ZodTypeAny>(
   };
 };
 
+// Express won't let me overwrite req or req.query
+// So need to make a new type that adds a prop on top of req
+// My custom prop to hold query stuff is in req.validatedQuery
+export interface ValidatedRequest<TQuery> {
+  validatedQuery: TQuery;
+}
+
 // Middleware to validate req.query
 // Takes in any Zod obj type shape
 // Takes in any Query String (req.query) type shape
@@ -46,13 +53,14 @@ export const validateParams = <T extends z.ZodTypeAny>(
 // If valid, continue with inferred Query String type shape
 export const validateQuery = <T extends z.ZodTypeAny>(
   schema: T,
-): RequestHandler<unknown, unknown, unknown, z.infer<T>> => {
+): RequestHandler<unknown, unknown, unknown, unknown> => {
   return (req, _res, next) => {
     const result = schema.safeParse(req.query);
     if (!result.success) {
       return next(new ZodError(result.error.errors));
     }
-    req.query = result.data;
+    // set to unknown first since its built in type is not exposed
+    (req as unknown as ValidatedRequest<T>).validatedQuery = result.data;
     next();
   };
 };
