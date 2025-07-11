@@ -34,76 +34,66 @@ jest.mock("@/lib/prisma", () => ({
   },
 }));
 
-// Make fakeNonExistingCoffeeId
-const fakeNonExistingCoffeeId: number = -1;
+// Dates
+const baseDate = new Date("2023-01-01T00:00:00Z");
+const updatedDate = new Date("2023-02-01T00:00:00Z");
 
-// Make fakeExistingCoffeeId
+// IDs
+const fakeNonExistingCoffeeId: number = -1;
 const fakeExistingCoffeeId: number = 1;
 
-// Make fakeCoffee
-const fakeCoffee: Coffee = {
+// Responses
+const baseCoffee: Coffee = {
   id: fakeExistingCoffeeId,
   name: "Espresso",
   description: "Strong and bold shot of pure coffee.",
   price: 2.5,
-  createdAt: new Date("2023-01-01T00:00:00Z"),
-  updatedAt: new Date("2023-01-01T00:00:00Z"),
+  createdAt: baseDate,
+  updatedAt: baseDate,
 };
+
+const fakeCoffee: Coffee = { ...baseCoffee };
 
 const fakePartialCoffee: Coffee = {
-  id: fakeExistingCoffeeId,
-  name: "Espresso",
+  ...baseCoffee,
   description: null,
-  price: 2.5,
-  createdAt: new Date("2023-01-01T00:00:00Z"),
-  updatedAt: new Date("2023-01-01T00:00:00Z"),
 };
 
-// Make fakeCreateCoffeeRequest
+// Requests
 const fakeCreateCoffeeRequest: CreateCoffeeRequest = {
-  name: "Espresso",
-  description: "Strong and bold shot of pure coffee.",
-  price: 2.5,
+  name: baseCoffee.name,
+  description: baseCoffee.description!,
+  price: baseCoffee.price,
 };
 
-// Make fakePartialCreateCoffeeRequest
 const fakePartialCreateCoffeeRequest: CreateCoffeeRequest = {
-  name: "Espresso",
-  price: 2.5,
+  name: baseCoffee.name,
+  price: baseCoffee.price,
 };
 
-// Make fakeUpdateCoffeeRequest
 const fakeUpdateCoffeeRequest: UpdateCoffeeRequest = {
   name: "Latte Updated",
   price: 99999,
 };
 
-// Make fakePartialUpdateCoffeeRequest
 const fakePartialUpdateCoffeeRequest: UpdateCoffeeRequest = {
-  name: "Latte Updated",
+  name: fakeUpdateCoffeeRequest.name,
 };
 
-// Make fakeUpdatedCoffee
 const fakeUpdatedCoffee: Coffee = {
-  id: fakeCoffee.id,
+  ...baseCoffee,
   name: fakeUpdateCoffeeRequest.name!,
-  description: fakeCoffee.description,
   price: fakeUpdateCoffeeRequest.price!,
-  createdAt: fakeCoffee.createdAt,
-  updatedAt: new Date("2023-02-01T00:00:00Z"),
+  updatedAt: updatedDate,
 };
 
-// Make fakePartialUpdatedCoffee
 const fakePartialUpdatedCoffee: Coffee = {
-  id: fakeCoffee.id,
+  ...baseCoffee,
   name: fakeUpdateCoffeeRequest.name!,
-  description: fakeCoffee.description,
-  price: fakeCoffee.price,
-  createdAt: fakeCoffee.createdAt,
-  updatedAt: new Date("2023-02-01T00:00:00Z"),
+  updatedAt: updatedDate,
 };
 
-// Make fake db error
+// Errors
 const fakeError = new Error("Database failure");
 
 // Make prisma not found error
@@ -146,35 +136,33 @@ describe("coffee.service", () => {
   });
 
   describe("getCoffeeById", () => {
-    it("returns a coffee when data exists", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.findUnique as jest.Mock).mockResolvedValue(fakeCoffee);
-      // Call real service with fakes
-      const result = await getCoffeeById(fakeExistingCoffeeId);
-      // Begin the test
-      expect(prisma.coffee.findUnique).toHaveBeenCalledWith({
-        where: { id: fakeExistingCoffeeId },
-      });
-      expect(result).toMatchObject({
-        id: fakeCoffee.id,
-        name: fakeCoffee.name,
-        description: fakeCoffee.description,
-        price: fakeCoffee.price,
-        createdAt: fakeCoffee.createdAt,
-        updatedAt: fakeCoffee.updatedAt,
+    describe.each([
+      {
+        mockResult: fakeCoffee,
+        inputId: fakeExistingCoffeeId,
+        expected: fakeCoffee,
+        label: "returns a coffee when data exists",
+      },
+      {
+        mockResult: null,
+        inputId: fakeNonExistingCoffeeId,
+        expected: null,
+        label: "returns null when data does not exist",
+      },
+    ])("$label", ({ mockResult, inputId, expected }) => {
+      it("works correctly", async () => {
+        // Set fake prisma.coffee output
+        (prisma.coffee.findUnique as jest.Mock).mockResolvedValue(mockResult);
+        // Call real service with fakes
+        const result = await getCoffeeById(inputId);
+        // Begin the test
+        expect(prisma.coffee.findUnique).toHaveBeenCalledWith({
+          where: { id: inputId },
+        });
+        expect(result).toEqual(expected);
       });
     });
-    it("returns null when data does not exist", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.findUnique as jest.Mock).mockResolvedValue(null);
-      // Call real service with fakes
-      const result = await getCoffeeById(fakeNonExistingCoffeeId);
-      // Begin the test
-      expect(prisma.coffee.findUnique).toHaveBeenCalledWith({
-        where: { id: fakeNonExistingCoffeeId },
-      });
-      expect(result).toEqual(null);
-    });
+
     it("throws an error if prisma.coffee.findUnique fails", async () => {
       // Set fake prisma.coffee output
       (prisma.coffee.findUnique as jest.Mock).mockRejectedValue(fakeError);
@@ -186,42 +174,33 @@ describe("coffee.service", () => {
   });
 
   describe("createCoffee", () => {
-    it("creates a coffee and returns it", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.create as jest.Mock).mockResolvedValue(fakeCoffee);
-      // Call real service with fakes
-      const result = await createCoffee(fakeCreateCoffeeRequest);
-      // Begin the test
-      expect(prisma.coffee.create).toHaveBeenCalledWith({
-        data: fakeCreateCoffeeRequest,
-      });
-      expect(result).toMatchObject({
-        id: fakeCoffee.id,
-        name: fakeCoffee.name,
-        description: fakeCoffee.description,
-        price: fakeCoffee.price,
-        createdAt: fakeCoffee.createdAt,
-        updatedAt: fakeCoffee.updatedAt,
-      });
-    });
-    it("partial creates a coffee and returns it", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.create as jest.Mock).mockResolvedValue(fakePartialCoffee);
-      // Call real service with fakes
-      const result = await createCoffee(fakePartialCreateCoffeeRequest);
-      // Begin the test
-      expect(prisma.coffee.create).toHaveBeenCalledWith({
-        data: fakePartialCreateCoffeeRequest,
-      });
-      expect(result).toMatchObject({
-        id: fakePartialCoffee.id,
-        name: fakePartialCoffee.name,
-        description: fakePartialCoffee.description,
-        price: fakePartialCoffee.price,
-        createdAt: fakePartialCoffee.createdAt,
-        updatedAt: fakePartialCoffee.updatedAt,
+    describe.each([
+      {
+        input: fakeCreateCoffeeRequest,
+        mockResult: fakeCoffee,
+        expected: fakeCoffee,
+        label: "creates a coffee and returns it",
+      },
+      {
+        input: fakePartialCreateCoffeeRequest,
+        mockResult: fakePartialCoffee,
+        expected: fakePartialCoffee,
+        label: "partial creates a coffee and returns it",
+      },
+    ])("$label", ({ input, mockResult, expected }) => {
+      it("works correctly", async () => {
+        // Set fake prisma.coffee output
+        (prisma.coffee.create as jest.Mock).mockResolvedValue(mockResult);
+        // Call real service with fakes
+        const result = await createCoffee(input);
+        // Begin the test
+        expect(prisma.coffee.create).toHaveBeenCalledWith({
+          data: input,
+        });
+        expect(result).toMatchObject(expected);
       });
     });
+
     it("throws an error if prisma.coffee.create fails", async () => {
       // Set fake prisma.coffee output
       (prisma.coffee.create as jest.Mock).mockRejectedValue(fakeError);
@@ -233,72 +212,61 @@ describe("coffee.service", () => {
   });
 
   describe("updateCoffee", () => {
-    it("updates a coffee and returns it", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.update as jest.Mock).mockResolvedValue(fakeUpdatedCoffee);
-      // Call real service with fakes
-      const result = await updateCoffee(
-        fakeExistingCoffeeId,
-        fakeUpdateCoffeeRequest,
-      );
-      // Begin the test
-      expect(prisma.coffee.update).toHaveBeenCalledWith({
-        data: fakeUpdateCoffeeRequest,
-        where: { id: fakeExistingCoffeeId },
+    describe.each([
+      {
+        label: "updates a coffee and returns it",
+        input: fakeUpdateCoffeeRequest,
+        mockResult: fakeUpdatedCoffee,
+        expected: {
+          id: fakeCoffee.id,
+          name: fakeUpdatedCoffee.name,
+          description: fakeCoffee.description,
+          price: fakeUpdatedCoffee.price,
+          createdAt: fakeCoffee.createdAt,
+          updatedAt: fakeUpdatedCoffee.updatedAt,
+        },
+      },
+      {
+        label: "partial updates a coffee and returns it",
+        input: fakePartialUpdateCoffeeRequest,
+        mockResult: fakePartialUpdatedCoffee,
+        expected: {
+          id: fakeCoffee.id,
+          name: fakePartialUpdateCoffeeRequest.name,
+          description: fakeCoffee.description,
+          price: fakeCoffee.price,
+          createdAt: fakeCoffee.createdAt,
+          updatedAt: fakePartialUpdatedCoffee.updatedAt,
+        },
+      },
+    ])("$label", ({ input, mockResult, expected }) => {
+      it("works correctly", async () => {
+        // Set fake prisma.coffee output
+        (prisma.coffee.update as jest.Mock).mockResolvedValue(mockResult);
+        // Call real service with fakes
+        const result = await updateCoffee(fakeExistingCoffeeId, input);
+        // Begin the test
+        expect(prisma.coffee.update).toHaveBeenCalledWith({
+          data: input,
+          where: { id: fakeExistingCoffeeId },
+        });
+        expect(result).toMatchObject(expected);
+        expect(mockResult.updatedAt).toBeInstanceOf(Date);
+        expect(mockResult.updatedAt.getTime()).toBeGreaterThan(
+          fakeCoffee.updatedAt.getTime(),
+        );
       });
-      expect(result).toMatchObject({
-        id: fakeCoffee.id,
-        name: fakeUpdatedCoffee.name,
-        description: fakeCoffee.description,
-        price: fakeUpdatedCoffee.price,
-        createdAt: fakeCoffee.createdAt,
-        updatedAt: fakeUpdatedCoffee.updatedAt,
-      });
-      expect(fakeUpdatedCoffee.updatedAt).toBeInstanceOf(Date);
-      expect(fakeUpdatedCoffee.updatedAt.getTime()).toBeGreaterThan(
-        fakeCoffee.updatedAt.getTime(),
-      );
     });
-    it("partial updates a coffee and returns it", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.update as jest.Mock).mockResolvedValue(
-        fakePartialUpdatedCoffee,
-      );
-      // Call real service with fakes
-      const result = await updateCoffee(
-        fakeExistingCoffeeId,
-        fakePartialUpdateCoffeeRequest,
-      );
-      // Begin the test
-      expect(prisma.coffee.update).toHaveBeenCalledWith({
-        data: fakePartialUpdateCoffeeRequest,
-        where: { id: fakeExistingCoffeeId },
-      });
-      expect(result).toMatchObject({
-        id: fakeCoffee.id,
-        name: fakePartialUpdateCoffeeRequest.name,
-        description: fakeCoffee.description,
-        price: fakeCoffee.price,
-        createdAt: fakeCoffee.createdAt,
-        updatedAt: fakePartialUpdatedCoffee.updatedAt,
-      });
-      expect(fakePartialUpdatedCoffee.updatedAt).toBeInstanceOf(Date);
-      expect(fakePartialUpdatedCoffee.updatedAt.getTime()).toBeGreaterThan(
-        fakeCoffee.updatedAt.getTime(),
-      );
-    });
+
     it("throws an error if coffee does not exist when updating", async () => {
-      // Set fake prisma.coffee output
       (prisma.coffee.update as jest.Mock).mockRejectedValue(notFoundError);
-      // Call real service with fakes
       await expect(
         updateCoffee(fakeNonExistingCoffeeId, fakeUpdateCoffeeRequest),
       ).rejects.toThrow(expect.objectContaining({ code: "P2025" }));
     });
+
     it("throws an error if prisma.coffee.update fails", async () => {
-      // Set fake prisma.coffee output
       (prisma.coffee.update as jest.Mock).mockRejectedValue(fakeError);
-      // Call real service with fakes
       await expect(
         updateCoffee(fakeExistingCoffeeId, fakeUpdateCoffeeRequest),
       ).rejects.toThrow("Database failure");
