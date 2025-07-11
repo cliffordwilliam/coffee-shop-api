@@ -24,12 +24,14 @@ beforeEach(() => {
 // Mock fake prisma.coffee
 jest.mock("@/lib/prisma", () => ({
   prisma: {
+    $transaction: jest.fn(),
     coffee: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
   },
 }));
@@ -109,29 +111,41 @@ const notFoundError = new Prisma.PrismaClientKnownRequestError(
 
 describe("coffee.service", () => {
   describe("getAllCoffees", () => {
+    const page = 1;
+    const limit = 10;
+
     describe.each([
       {
-        result: [fakeCoffee],
-        expected: [fakeCoffee],
-        label: "returns a list of coffees",
+        transactionResult: [1, [fakeCoffee]],
+        expected: [1, [fakeCoffee]],
+        label: "returns a list of coffees with total count",
       },
-      { result: [], expected: [], label: "returns an empty list of coffees" },
-    ])("$label", ({ result, expected }) => {
+      {
+        transactionResult: [0, []],
+        expected: [0, []],
+        label: "returns an empty list of coffees with zero count",
+      },
+    ])("$label", ({ transactionResult, expected }) => {
       it("works correctly", async () => {
-        // Set fake prisma.coffee output
-        (prisma.coffee.findMany as jest.Mock).mockResolvedValue(result);
-        // Call real service with fakes
-        const data = await getAllCoffees();
-        // Begin the test
-        expect(prisma.coffee.findMany).toHaveBeenCalled();
-        expect(data).toEqual(expected);
+        (prisma.$transaction as jest.Mock).mockResolvedValue(transactionResult);
+        const result = await getAllCoffees(page, limit);
+
+        expect(prisma.$transaction).toHaveBeenCalledWith([
+          prisma.coffee.count(),
+          prisma.coffee.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+          }),
+        ]);
+        expect(result).toEqual(expected);
       });
     });
-    it("throws an error if prisma.coffee.findMany fails", async () => {
-      // Set fake prisma.coffee output
-      (prisma.coffee.findMany as jest.Mock).mockRejectedValue(fakeError);
-      // Call real service with fakes
-      await expect(getAllCoffees()).rejects.toThrow("Database failure");
+
+    it("throws an error if transaction fails", async () => {
+      (prisma.$transaction as jest.Mock).mockRejectedValue(fakeError);
+      await expect(getAllCoffees(page, limit)).rejects.toThrow(
+        "Database failure",
+      );
     });
   });
 

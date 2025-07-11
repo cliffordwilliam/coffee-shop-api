@@ -117,22 +117,45 @@ describe("coffee.schema", () => {
       expect(parsed).toEqual(response);
     });
 
-    it("validates ListCoffeesResponseSchema with multiple coffees", () => {
+    it("validates ListCoffeesResponseSchema with multiple coffees and meta", () => {
       const parsed = ListCoffeesResponseSchema.parse({
         success: true,
         data: [coffee, coffee],
+        meta: {
+          pagination: {
+            page: 1,
+            size: 2,
+            limit: 10,
+            total: 2,
+          },
+        },
       });
       expect(parsed.data.length).toBe(2);
+      expect(parsed.meta.pagination.total).toBe(2);
     });
 
-    it("validates ListCoffeesResponseSchema with empty array", () => {
+    it("validates ListCoffeesResponseSchema with empty array and meta", () => {
       const parsed = ListCoffeesResponseSchema.parse({
         success: true,
         data: [],
+        meta: {
+          pagination: {
+            page: 1,
+            size: 2,
+            total: 0,
+          },
+        },
       });
       expect(parsed).toEqual({
         success: true,
         data: [],
+        meta: {
+          pagination: {
+            page: 1,
+            size: 2,
+            total: 0,
+          },
+        },
       });
     });
 
