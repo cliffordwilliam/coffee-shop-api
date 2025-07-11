@@ -15,4 +15,12 @@ module.exports = {
     prefix: "<rootDir>/",
   }),
   coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/generated/"],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
 };
