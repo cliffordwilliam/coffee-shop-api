@@ -1,5 +1,5 @@
 import { ERROR_CODES } from "@/modules/api/errorCodes";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
 import { ErrorResponseSchema, type ErrorResponse } from "@/modules/api/schema";
@@ -14,6 +14,8 @@ export function errorHandler(
   err: Error,
   _req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _next: NextFunction, // Need this to satisfy express error middleware signature
 ) {
   // Catch any Zod error class instances thrown by app
   if (err instanceof ZodError) {
@@ -80,5 +82,6 @@ export function errorHandler(
     errorResponse,
   );
   // Give it to client
+  console.log(err);
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json(validErrorResponse);
 }
