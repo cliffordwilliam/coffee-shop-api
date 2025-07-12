@@ -23,6 +23,11 @@ app.use(env.apiPrefix, apiRouter);
 // Catch all thrown error
 app.use(errorHandler);
 
+// Health check
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Start HTTP server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}${env.apiPrefix}`);

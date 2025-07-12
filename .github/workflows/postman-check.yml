@@ -22,16 +22,19 @@ jobs:
       - name: 🐳 Start App & DB Containers
         run: ./local-start-full.sh &
 
-      - name: ⏳ Wait for server to be ready
+      - name: ⏳ Wait for app to be ready
         run: |
-          echo "Waiting for http://localhost:3000/api/v1/coffee to be up..."
+          echo "Waiting for app to be ready on http://localhost:3000/healthz..."
           for i in {1..30}; do
-            if curl -s http://localhost:3000/api/v1/coffee | grep -q "success"; then
-              echo "✅ Server is ready!"
-              break
+            if curl -sSf http://localhost:3000/healthz > /dev/null; then
+              echo "✅ App is up!"
+              exit 0
             fi
+            echo "Waiting... ($i)"
             sleep 2
           done
+          echo "❌ Timed out waiting for app"
+          exit 1
 
       - name: 🧪 Run Newman E2E Tests
         working-directory: ./postman
