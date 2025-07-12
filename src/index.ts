@@ -5,6 +5,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger";
+import { logger } from "./lib/logger";
 
 const app = express();
 const PORT = env.port;
@@ -32,9 +33,21 @@ app.get("/healthz", (_req, res) => {
 
 if (process.env.NODE_ENV !== "test") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  logger.info(`📘 Swagger UI available at http://localhost:${PORT}/api-docs`);
 }
 
 // Start HTTP server
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on http://localhost:${PORT}${env.apiPrefix}`);
+  logger.info(`Server running on http://localhost:${PORT}${env.apiPrefix}`);
+});
+
+// Also handle fatal errors
+process.on("uncaughtException", (err) => {
+  logger.error("Uncaught Exception:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.error("Unhandled Rejection:", reason);
+  process.exit(1);
 });
