@@ -16,6 +16,12 @@ app.use(cors());
 // Parse JSON payload input into req.body
 app.use(express.json());
 
+// Swagger docs (skip in test)
+if (process.env.NODE_ENV !== "test") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  logger.info(`📘 Swagger UI available at http://localhost:${PORT}/api-docs`);
+}
+
 // Modules
 const apiRouter = express.Router();
 apiRouter.use("/coffee", coffeeRoutes);
@@ -30,11 +36,6 @@ app.use(errorHandler);
 app.get("/healthz", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
-if (process.env.NODE_ENV !== "test") {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  logger.info(`📘 Swagger UI available at http://localhost:${PORT}/api-docs`);
-}
 
 // Start HTTP server
 app.listen(PORT, "0.0.0.0", () => {
