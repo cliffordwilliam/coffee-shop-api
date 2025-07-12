@@ -10,6 +10,7 @@ import {
   DeleteCoffeeResponseSchema,
 } from "@/modules/coffee/coffee.schema";
 import { SuccessResponseSchema } from "@/modules/api/schema";
+import { PaginationMeta } from "@/modules/common/common.schema";
 
 describe("coffee.schema", () => {
   const validBase = {
@@ -131,7 +132,8 @@ describe("coffee.schema", () => {
         },
       });
       expect(parsed.data.length).toBe(2);
-      expect(parsed.meta.pagination.total).toBe(2);
+      const meta = parsed.meta as PaginationMeta;
+      expect(meta.pagination.total).toBe(2);
     });
 
     it("validates ListCoffeesResponseSchema with empty array and meta", () => {

@@ -1,6 +1,6 @@
 // This file defines type shapes and zods for error res and success res
 
-import { z, ZodTypeAny, ZodObject, ZodLiteral } from "zod";
+import { z } from "zod";
 import { ErrorCodeEnum, type ErrorCodeValue } from "./errorCodes";
 
 // This is my type shape for error response
@@ -29,45 +29,15 @@ export interface SuccessResponse<T = unknown, M = Record<string, unknown>> {
   meta?: M; // Optional. Think of it like state transition extra meta message, say pagination extra meta (limit, offset, ...)
 }
 // Success response Zod
-interface BaseSuccessShape<T extends ZodTypeAny> {
-  success: ZodLiteral<true>;
-  data: T;
-}
-
-type FullSuccessShape<
-  T extends ZodTypeAny,
-  M extends ZodTypeAny,
-> = BaseSuccessShape<T> & {
-  meta: M;
-};
-
-// Overload 1: with meta
-export function SuccessResponseSchema<
-  T extends ZodTypeAny,
-  M extends ZodTypeAny,
->(data: T, meta: M): ZodObject<FullSuccessShape<T, M>, "strip">;
-
-// Overload 2: no meta
-export function SuccessResponseSchema<T extends ZodTypeAny>(
+export const SuccessResponseSchema = <
+  T extends z.ZodTypeAny,
+  M extends z.ZodTypeAny = z.ZodTypeAny,
+>(
   data: T,
-): ZodObject<BaseSuccessShape<T>, "strip">;
-
-// Implementation
-export function SuccessResponseSchema<
-  T extends ZodTypeAny,
-  M extends ZodTypeAny,
->(data: T, meta?: M) {
-  const base = {
+  meta?: M,
+) =>
+  z.object({
     success: z.literal(true),
     data,
-  };
-
-  if (meta) {
-    return z.object({
-      ...base,
-      meta,
-    }) as ZodObject<FullSuccessShape<T, M>, "strip">;
-  }
-
-  return z.object(base) as ZodObject<BaseSuccessShape<T>, "strip">;
-}
+    ...(meta ? { meta } : {}),
+  });
