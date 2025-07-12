@@ -242,10 +242,9 @@ project-root/
 
 Interactive API documentation is available at:
 
-📄 Docs URL: http://localhost:3000/api-docs  
-🔗 Base URL: http://localhost:3000
+📄 Docs URL: http://localhost:3000/api-docs
 
-> The documentation is powered by Swagger UI and generated from an OpenAPI specification located in `docs/openapi.yaml`.
+> The documentation is powered by Swagger UI and generated from an OpenAPI specification.
 
 ---
 
