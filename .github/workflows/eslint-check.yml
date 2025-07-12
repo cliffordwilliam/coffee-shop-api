@@ -1,4 +1,4 @@
-# Security guard to check if codebase is formatted with Prettier before entering remote.
+# Security guard to check if codebase is linted with ESLint before entering remote.
 name: ESLint Check
 on: [push, pull_request] # On these events, run these jobs
 jobs:

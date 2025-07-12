@@ -1,4 +1,4 @@
-# Security guard to check if codebase is formatted with Prettier before entering remote.
+# Security guard to check if codebase unit test works before entering remote.
 name: Run Tests
 on: [push, pull_request] # On these events, run these jobs
 jobs:
