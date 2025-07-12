@@ -3,40 +3,41 @@ name: Postman Check
 on: [push, pull_request]
 
 jobs:
-  postman-e2e:
+  check-postman-action:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🛠️ Set up Node.js
+      - name: 📦 Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: 📦 Install dependencies
-        run: npm ci
+      - name: 🔧 Make scripts executable
+        run: chmod +x ./local-start-full.sh
 
-      - name: 📦 Install Newman
-        run: npm install -g newman
+      - name: 🐳 Start App & DB Containers
+        run: ./local-start-full.sh &
 
-      - name: 📦 Install expect (for interactive script)
-        run: sudo apt-get install -y expect
+      - name: ⏳ Wait for server to be ready
+        run: |
+          echo "Waiting for http://localhost:3000/api/v1/coffee to be up..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/v1/coffee | grep -q "success"; then
+              echo "✅ Server is ready!"
+              break
+            fi
+            sleep 2
+          done
 
-      - name: 🚀 Start App + Run E2E tests
+      - name: 🧪 Run Newman E2E Tests
         working-directory: ./postman
         run: |
-          # Start the app using your interactive script
-          expect -c '
-          spawn ./local-start.sh
-          expect "Press Enter to continue"
-          send "\r"
-          interact
-          ' &
+          npx newman run ./postman_collection.json --environment ./postman_environment.json
 
-          echo "⏳ Waiting for app to start..."
-          sleep 5
-
-          echo "🚨 Running E2E tests..."
-          newman run ./postman_collection.json --environment ./postman_environment.json
+      - name: 🚨 Fail if Newman fails
+        if: ${{ failure() }}
+        run: exit 1
