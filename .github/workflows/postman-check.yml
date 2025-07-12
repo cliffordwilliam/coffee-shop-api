@@ -1,0 +1,43 @@
+name: Postman E2E Test
+
+on: [push, pull_request]
+
+jobs:
+  postman-e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📦 Install Newman
+        run: npm install -g newman
+
+      - name: 📦 Install expect (to auto-press enter)
+        run: sudo apt-get install -y expect
+
+      - name: 🚀 Start API server (auto-confirm prompt)
+        run: |
+          expect -c '
+          spawn ./local-start.sh
+          expect "Press enter to continue"
+          send "\r"
+          interact
+          ' &
+
+          # Wait for server to be ready (adjust if needed)
+          echo "⏳ Waiting for server to start..."
+          sleep 5
+
+      - name: 🧪 Run Postman E2E tests with Newman
+        run: |
+          echo "🚨 Running E2E tests..."
+          newman run ./postman_collection.json --environment ./postman_environment.json

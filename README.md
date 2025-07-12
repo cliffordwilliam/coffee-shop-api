@@ -253,6 +253,23 @@ Interactive API documentation is available at:
 
 You can test this API using the included Postman collection:
 
+### Newman E2E Test
+
+1. Install newman globally `npm i -g newman`
+2. Run testing inside `postman` directory
+
+```bash
+newman run ./postman_collection.json \
+--folder "Coffees" \
+--environment ./postman_environment.json
+```
+
+Or this to run all
+
+```bash
+newman run ./postman_collection.json --environment ./postman_environment.json
+```
+
 ### 📂 Files
 
 - `postman/coffee-shop-api.postman_collection.json`: Contains all endpoint definitions
