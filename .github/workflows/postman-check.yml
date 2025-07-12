@@ -1,4 +1,4 @@
-name: Postman E2E Test
+name: Postman Check
 
 on: [push, pull_request]
 
@@ -21,23 +21,22 @@ jobs:
       - name: 📦 Install Newman
         run: npm install -g newman
 
-      - name: 📦 Install expect (to auto-press enter)
+      - name: 📦 Install expect (for interactive script)
         run: sudo apt-get install -y expect
 
-      - name: 🚀 Start API server (auto-confirm prompt)
+      - name: 🚀 Start App + Run E2E tests
+        working-directory: ./postman
         run: |
+          # Start the app using your interactive script
           expect -c '
           spawn ./local-start.sh
-          expect "Press enter to continue"
+          expect "Press Enter to continue"
           send "\r"
           interact
           ' &
 
-          # Wait for server to be ready (adjust if needed)
-          echo "⏳ Waiting for server to start..."
+          echo "⏳ Waiting for app to start..."
           sleep 5
 
-      - name: 🧪 Run Postman E2E tests with Newman
-        run: |
           echo "🚨 Running E2E tests..."
           newman run ./postman_collection.json --environment ./postman_environment.json
