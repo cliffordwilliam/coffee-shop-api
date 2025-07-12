@@ -3,6 +3,8 @@ import express from "express";
 import coffeeRoutes from "./modules/coffee/coffee.route";
 import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger";
 
 const app = express();
 const PORT = env.port;
@@ -27,6 +29,10 @@ app.use(errorHandler);
 app.get("/healthz", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
+
+if (process.env.NODE_ENV !== "test") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 // Start HTTP server
 app.listen(PORT, "0.0.0.0", () => {
