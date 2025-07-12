@@ -3,34 +3,55 @@ name: Postman Check
 on: [push, pull_request]
 
 jobs:
-  check-postman-action:
+  postman-check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    container: node:20
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: coffee-shop-api
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 📦 Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: 📄 Copy .env
+        run: cp .env.example .env
 
-      - name: 🔧 Make scripts executable
-        run: chmod +x ./local-start-full.sh
+      - name: 🛠️ Override DB host to match service container
+        run: sed -i 's/DB_HOST=localhost/DB_HOST=postgres/' .env
 
-      - name: 🐳 Start App & DB Containers
-        run: ./local-start-full.sh &
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🧱 Push Prisma schema and seed DB
+        run: |
+          npx prisma generate
+          npx prisma db push
+          npx prisma db seed
+
+      - name: 🚀 Start app in background
+        run: npm run dev &
 
       - name: ⏳ Wait for app to be ready
         run: |
-          echo "Waiting for app to be ready on http://localhost:3000/healthz..."
           for i in {1..30}; do
             if curl -sSf http://localhost:3000/healthz > /dev/null; then
               echo "✅ App is up!"
               exit 0
             fi
-            echo "Waiting... ($i)"
+            echo "Waiting for app... ($i)"
             sleep 2
           done
           echo "❌ Timed out waiting for app"
@@ -40,7 +61,3 @@ jobs:
         working-directory: ./postman
         run: |
           npx newman run ./postman_collection.json --environment ./postman_environment.json
-
-      - name: 🚨 Fail if Newman fails
-        if: ${{ failure() }}
-        run: exit 1
