@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { env } from "@/config/env";
+import { NODE_ENVS } from "@/constants/env";
 
 // Prepare development singleton
 const globalForPrisma = globalThis as unknown as {
@@ -10,6 +11,6 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 // Update development singleton with original
-if (env.nodeEnv !== "production") {
+if (env.nodeEnv !== NODE_ENVS.PRODUCTION) {
   globalForPrisma.prisma = prisma;
 }

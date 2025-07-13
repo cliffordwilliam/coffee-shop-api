@@ -6,6 +6,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "../docs/swagger";
 import { logger } from "./lib/logger";
+import { NODE_ENVS } from "@/constants/env";
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Swagger docs (skip in test)
-if (env.nodeEnv !== "test") {
+if (env.nodeEnv !== NODE_ENVS.TEST) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   logger.info(
     `📘 Swagger UI available at ${env.protocol}://${env.localhost}:${env.port}/api-docs`,
