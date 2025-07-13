@@ -7,3 +7,4 @@
 - [ ] Add logging
 - [ ] Developm ERD
 - [ ] Enable CI deploy after Postman check
+- [ ] Light log in CI only, heavy ones crash app
