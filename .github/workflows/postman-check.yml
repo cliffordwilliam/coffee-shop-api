@@ -1,8 +1,6 @@
 # Security guard to check if codebase postman e2e test works before entering remote.
 name: Postman Check
-
 on: [push, pull_request]
-
 jobs:
   postman-check-action:
     runs-on: ubuntu-latest

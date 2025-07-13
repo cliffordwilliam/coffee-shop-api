@@ -1,6 +1,6 @@
 # Security guard to check if codebase is formatted with Prettier before entering remote.
 name: Prettier Check
-on: [push, pull_request] # On these events, run these jobs
+on: [push, pull_request]
 jobs:
   prettier-check-action:
     runs-on: ubuntu-latest
