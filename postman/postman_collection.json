@@ -53,7 +53,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/coffee",
+              "raw": "{{base_url}}/coffees",
               "host": ["{{base_url}}"],
               "path": ["coffee"]
             }
@@ -97,7 +97,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/coffee/{{coffee_id}}",
+              "raw": "{{base_url}}/coffees/{{coffee_id}}",
               "host": ["{{base_url}}"],
               "path": ["coffee", "{{coffee_id}}"]
             }
@@ -126,7 +126,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/coffee/{{coffee_id}}",
+              "raw": "{{base_url}}/coffees/{{coffee_id}}",
               "host": ["{{base_url}}"],
               "path": ["coffee", "{{coffee_id}}"]
             }
@@ -154,7 +154,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/coffee/{{coffee_id}}",
+              "raw": "{{base_url}}/coffees/{{coffee_id}}",
               "host": ["{{base_url}}"],
               "path": ["coffee", "{{coffee_id}}"]
             }

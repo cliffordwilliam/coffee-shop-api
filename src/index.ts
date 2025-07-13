@@ -4,7 +4,7 @@ import coffeeRoutes from "./modules/coffee/coffee.route";
 import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./swagger";
+import { swaggerSpec } from "../docs/swagger";
 import { logger } from "./lib/logger";
 
 const app = express();
@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== "test") {
 
 // Modules
 const apiRouter = express.Router();
-apiRouter.use("/coffee", coffeeRoutes);
+apiRouter.use("/coffees", coffeeRoutes);
 
 // Prefix
 app.use(env.apiPrefix, apiRouter);
