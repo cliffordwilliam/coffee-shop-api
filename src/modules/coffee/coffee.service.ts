@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { CreateCoffeeRequest, UpdateCoffeeRequest } from "./coffee.schema";
+import { logger } from "@/lib/logger";
 
 // This file uses prisma to get data
 
 // Use prisma to find many
 export const getAllCoffees = async (page: number, limit: number) => {
+  logger.info("Grab all coffees");
   return await prisma.$transaction([
     prisma.coffee.count(),
     prisma.coffee.findMany({
