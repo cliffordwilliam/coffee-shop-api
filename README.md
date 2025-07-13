@@ -2,11 +2,20 @@
 
 ## 📘 Description
 
-The Coffee Shop API is a backend project built with TypeScript and Express.js, developed for my portfolio. It demonstrates my understanding of building modern backend applications using a relational database, Docker, and code-first ORM practices. This project serves as a solid foundation for scaling into more complex systems.
+The Coffee Shop API is a backend project for an e-commerce coffee store, built using TypeScript and Express.js. Created for my developer portfolio, it demonstrates my ability to build scalable backend systems with modern web technologies.
+
+This project highlights key backend engineering skills, including:
+
+- Designing and implementing RESTful APIs
+- Modeling real-world business requirements using PostgreSQL
+- Managing data and migrations with Prisma ORM
+- Containerizing development and deployment using Docker
+
+It simulates a realistic scenario with products, customers, orders, and payments—laying the groundwork for more complex backend systems in production environments.
 
 ---
 
-## ⚙️ Technology Stack
+## ⚙️ Tech Stack
 
 - **Language**: TypeScript
 - **Framework**: Express.js
@@ -21,30 +30,29 @@ The Coffee Shop API is a backend project built with TypeScript and Express.js, d
 
 ### 📋 Prerequisites
 
-- [Node.js](https://nodejs.org/en/) v20.x (install via [nvm](https://github.com/nvm-sh/nvm))
+- [Node.js](https://nodejs.org/en/) v20.x (recommended to install via [nvm](https://github.com/nvm-sh/nvm))
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - Git
 
 > ⚠️ **Important:**
-> This app uses Docker containers named:
+> This project uses Docker containers named:
 >
 > - `coffee_shop_postgres` (PostgreSQL)
-> - `coffee_shop_api` (App container — only in full Docker mode)
+> - `coffee_shop_api` (API app container — used in full Docker mode)
 >
-> If containers with these names already exist (even stopped), the setup will fail.
-> Please remove or rename them before running either setup script.
+> If containers with these names already exist (even if stopped), the setup will fail. Please remove or rename them before running either setup script.
 
 ---
 
-### 👤 Docker Group Access (Linux users)
+### 👤 Docker Group Access (Linux Users)
 
-> 🛑 **Linux users:**
+> 🛑 **Note for Linux users:**
 > This project assumes your user is in the `docker` group.
 
-The `./local-start.sh` script uses Docker and Node.js via `nvm`. Running it with `sudo` breaks `nvm`, and prompting for `sudo` on every Docker call is disruptive.
+The `./local-start.sh` script uses Docker and Node.js via `nvm`. Running it with `sudo` will break `nvm` path resolution because it uses the root’s environment instead of your user’s. Also, constantly entering `sudo` for Docker is disruptive.
 
-While adding your user to the `docker` group is a known security risk (it grants root-level access), it’s a common tradeoff most developers accept for convenience in local development.
+While adding your user to the `docker` group is a known security tradeoff (it effectively grants root access), it’s a common and accepted practice for local development.
 
 👉 [Docker Post-install Instructions](https://docs.docker.com/engine/install/linux-postinstall/)
 
@@ -52,7 +60,7 @@ While adding your user to the `docker` group is a known security risk (it grants
 
 ### 🧠 Managing Node.js Versions
 
-If your system comes with an older Node.js version, use `nvm` to avoid system conflicts:
+If your system uses an older Node.js version, install and use the correct version via `nvm` to avoid conflicts:
 
 ```bash
 nvm install 20
@@ -71,7 +79,7 @@ nvm use 20
    git checkout main
    ```
 
-2. **Choose your development mode:**
+2. **Choose a development mode:**
 
 ---
 
@@ -83,29 +91,23 @@ nvm use 20
 
 This script will:
 
-- Warn if a Docker container named `coffee_shop_postgres` already exists (even if stopped)
-
-- Validate all prerequisites:
-  - Docker and Docker Compose
+- Warn if a container named `coffee_shop_postgres` already exists
+- Validate prerequisites:
+  - Docker & Docker Compose
   - Node.js v20 (via NVM)
   - Internet connectivity
 
-- Auto-copy `.env.example` to `.env` if missing
-
+- Copy `.env.example` to `.env` if not present
 - Install Node.js dependencies via `npm install`
-
-- Start **PostgreSQL** using `docker-compose.yaml`
-
-- Wait until PostgreSQL is ready to accept connections
-
+- Start PostgreSQL via `docker-compose.yaml`
+- Wait for PostgreSQL to be ready
 - Run Prisma commands:
-  - Push schema: `npx prisma db push`
-  - Generate client: `npx prisma generate`
-  - Seed data: `npx prisma db seed`
+  - `npx prisma db push` — sync schema
+  - `npx prisma generate` — generate Prisma client
+  - `npx prisma db seed` — seed initial data
 
-- Start the dev server in the background: `npm run dev`
-
-> 🌐 Script will print to terminal where your API will be live at
+- Start the development server with `npm run dev`
+- Print the API and Swagger Docs URL to the terminal
 
 > 🛑 Press `Ctrl + C` to stop the server and trigger automatic cleanup
 
@@ -119,31 +121,25 @@ This script will:
 
 This script will:
 
-- Warn if containers `coffee_shop_postgres` or `coffee_shop_api` already exist (even stopped)
+- Warn if `coffee_shop_postgres` or `coffee_shop_api` containers already exist
+- Validate prerequisites:
+  - Docker & Docker Compose
 
-- Validate all prerequisites:
-  - Docker and Docker Compose
-
-- Auto-copy `.env.example` to `.env` if missing
-
-- Start **both** the app and database using `docker-compose.full.yaml`
-
-- Wait until PostgreSQL is ready to accept connections
-
-- Run Prisma commands _inside the app container_:
+- Copy `.env.example` to `.env` if not present
+- Launch both app and database using `docker-compose.full.yaml`
+- Wait for PostgreSQL to become available
+- Run Prisma commands **inside the app container**:
   - Push schema
   - Generate client
-  - Seed data
+  - Seed database
 
-- Attach to container logs for live output
+- Stream logs from containers
 
-> 🌐 Script will print to terminal where your API will be live at
-
-> 🛑 Press `Ctrl + C` to stop containers and clean up resources
+> 🛑 Press `Ctrl + C` to stop and clean up containers
 
 ---
 
-### 🧪 Unit Test
+### 🧪 Unit Tests
 
 Run unit tests with coverage:
 
@@ -155,12 +151,12 @@ npm test
 
 ## 🛢 Database Access
 
-If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgAdmin, or Postico), you can connect using:
+To inspect the database using a GUI (e.g., TablePlus, pgAdmin, Postico), use:
 
 - **Host**: `localhost`
-- **Port**: `5432` (or your configured port)
+- **Port**: `5432` (or your custom port)
 - **Username**: `postgres`
-- **Password**: (check your `.env` file)
+- **Password**: See your `.env` file
 - **Database**: `coffee-shop-api`
 
 ---
@@ -168,14 +164,16 @@ If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgA
 ## 🔀 Git Workflow
 
 1. Create a new branch from `main`.
-2. Use descriptive branch names, prefixed by the type of work:
+2. Use descriptive branch names with prefixes:
    - `feat/`: New features
    - `fix/`: Bug fixes
-   - `chore/`: Tooling or config changes
+   - `chore/`: Tooling/config changes
    - `docs/`: Documentation updates
-3. Open pull requests to `main`.
-4. Ensure all tests and checks pass.
-5. Use **Squash Merge** for a clean commit history.
+   - `ci/`: CI/CD changes
+
+3. Open a pull request into `main`.
+4. Ensure all tests pass: `npm test` and `npm run test:api`.
+5. Use **Squash Merge** for a clean, linear commit history.
 
 ---
 
@@ -183,105 +181,130 @@ If you want to inspect the database manually (e.g. via a GUI like TablePlus, pgA
 
 ```
 project-root/
-├── docker-compose.yaml         # Basic Docker Compose setup (DB Container)
-├── docker-compose.full.yaml    # Full Docker Compose setup (API BE App and DB Container)
-├── Dockerfile                  # Docker image definition for the API BE App
+├── docker-compose.yaml             # Docker setup for PostgreSQL
+├── docker-compose.full.yaml        # Full Docker setup (App + DB)
+├── Dockerfile                      # API container definition
 │
-├── local-start.sh              # Script to start the DB Container
-├── local-start-full.sh         # Script to start the DB Container and the BE App Container
+├── local-start.sh                  # Starts DB container (local dev)
+├── local-start-full.sh             # Starts App + DB containers (full Docker)
 │
-├── package.json                # NPM project configuration and scripts
-├── package-lock.json           # Exact dependency versions for reproducible installs
-├── tsconfig.json               # TypeScript compiler configuration
-├── README.md                   # Project documentation
+├── package.json                    # Project metadata & scripts
+├── package-lock.json               # Package lockfile
+├── tsconfig.json                   # TypeScript configuration
+├── jest.config.js                  # Jest test configuration
+├── eslint.config.mjs              # ESLint configuration
+├── README.md
+├── LICENSE
+├── TODO.md                         # Pending tasks and todos
 │
-├── prisma/                     # Prisma schema and seed data
-│   ├── schema.prisma           # Prisma database schema
-│   └── seed.ts                 # Seed script for populating initial data
+├── prisma/
+│   ├── schema.prisma               # Prisma schema definition
+│   └── seed.ts                     # Seed data script
 │
-├── generated/                  # Auto-generated code
-│   └── prisma/                 # Prisma client code (after `prisma generate`)
+├── generated/
+│   └── prisma/                     # Auto-generated Prisma client (DO NOT EDIT)
+│       ├── *.js / *.d.ts          # Generated client files
+│       ├── runtime/               # Prisma runtime internals
+│       └── schema.prisma          # Copy of schema (auto-linked)
 │
-├── src/                        # Application source code
-│   ├── index.ts                # Application entry point
+├── src/
+│   ├── index.ts                    # App entry point
+│   ├── config/
+│   │   └── env.ts                  # Environment variable validation
+│   ├── constants/
+│   │   └── http.ts                # HTTP-related constants
+│   ├── lib/
+│   │   ├── logger.ts              # Logging utility
+│   │   └── prisma.ts              # Prisma client singleton
+│   ├── middlewares/
+│   │   ├── errorHandler.ts        # Global error handler
+│   │   └── validate.ts            # Request validation (Zod)
+│   ├── modules/
+│   │   ├── api/                   # Shared API logic & error handling
+│   │   │   ├── ApiError.ts
+│   │   │   ├── InvalidStatusError.ts
+│   │   │   ├── NotFoundError.ts
+│   │   │   ├── errorCodes.ts
+│   │   │   └── schema.ts
+│   │   ├── coffee/                # Coffee-related endpoints
+│   │   │   ├── coffee.controller.ts
+│   │   │   ├── coffee.route.ts
+│   │   │   ├── coffee.schema.ts
+│   │   │   └── coffee.service.ts
+│   │   └── common/                # Shared schemas/utilities
+│   │       └── common.schema.ts
+│   ├── utils/
+│   │   └── validateResponse.ts    # Zod response validation
+│   └── swagger.ts                 # Swagger/OpenAPI setup
 │
-│   ├── config/                 # Configuration-related files
-│   │   └── env.ts              # Loads and validates environment variables
+├── tests/
+│   └── unit/
+│       ├── coffee/
+│       │   ├── coffee.schema.test.ts
+│       │   └── coffee.service.test.ts
+│       └── common/
+│           └── common.schema.test.ts
 │
-│   ├── lib/                    # Shared libraries
-│   │   └── prisma.ts           # Singleton Prisma client instance
+├── postman/
+│   ├── postman_collection.json     # Postman requests
+│   └── postman_environment.json    # Postman environment vars
 │
-│   ├── middlewares/            # Express middlewares
-│   │   ├── errorHandler.ts     # Global error handler for API BE App
-│   │   └── validate.ts         # Input payload request validation middleware using Zod
-│
-│   ├── modules/                # Feature modules (grouped by domain)
-│   │   ├── api/                    # Shared API logic and errors
-│   │   │   ├── ApiError.ts             # Error base class (throw these class instances as error)
-│   │   │   ├── errorCodes.ts           # Error codes for error class
-│   │   │   ├── InvalidStatusError.ts   # Error class for invalid status
-│   │   │   ├── NotFoundError.ts        # Error class for 404 responses
-│   │   │   └── schema.ts               # Types and Zods for success and error response
-│   │   └── {module}/               # Feature-specific module (e.g., coffee)
-│   │       ├── {module}.controller.ts  # Route handlers, validates output
-│   │       ├── {module}.route.ts       # Route definitions, validates input payload
-│   │       ├── {module}.schema.ts      # Types and Zods for response and request
-│   │       └── {module}.service.ts     # Business logic and DB interaction
-│
-│   └── utils/                  # Utility functions
-│       └── validateResponse.ts # Validates outgoing API responses using Zod
-│
-├── postman/                    # Postman collections & envs
-│   ├── coffee-shop-api.postman_collection.json      # Exported API collection (v2.1 format)
-│   └── dev.postman_environment.json                 # Environment vars (e.g., base_url)
+└── docs/
+    ├── api-response-format.md      # API response contract
+    └── erd.md                      # Entity Relationship Diagram
 ```
 
 ---
 
 ## 📚 API Documentation
 
-Interactive API documentation is available at:
+Interactive documentation is available at:
 
-📄 Docs URL: http://localhost:3000/api-docs
+📄 [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
-> The documentation is powered by Swagger UI and generated from an OpenAPI specification.
+> Powered by Swagger UI. The OpenAPI spec is generated in-memory at runtime using `swagger-jsdoc` and `swagger-ui-express`.
 
 ---
 
 ## 🧪 Postman API Collection
 
-You can test this API using the included Postman collection:
+Use the included Postman collection to run tests or manually interact with the API.
 
-### Newman E2E Test
+### 🧪 Newman CLI E2E Testing
 
-1. Install newman globally `npm i -g newman`
-2. Run testing inside `postman` directory
+1. Start the app (any mode)
+2. Install Newman globally: `npm i -g newman`
+3. Enter the postman directory
+4. Run tests:
 
 ```bash
+# Run only "Coffees" folder
 newman run ./postman_collection.json \
---folder "Coffees" \
---environment ./postman_environment.json
-```
+  --folder "Coffees" \
+  --environment ./postman_environment.json
 
-Or this to run all
+# Or run all tests
+newman run ./postman_collection.json \
+  --environment ./postman_environment.json
 
-```bash
-newman run ./postman_collection.json --environment ./postman_environment.json
+# Or using an NPM script
+npm run test:api
 ```
 
 ### 📂 Files
 
-- `postman/coffee-shop-api.postman_collection.json`: Contains all endpoint definitions
-- `postman/dev.postman_environment.json`: Contains environment variables like `base_url`
+- `postman/coffee-shop-api.postman_collection.json` — All API endpoints and tests
+- `postman/dev.postman_environment.json` — Environment config (e.g., `base_url`)
 
-### 🚀 Getting Started
+### 🚀 Using Postman
 
-1. Open Postman and import the collection file.
-2. Import the environment file and select it as active.
-3. Start the backend server using one of the setup scripts.
-4. Run or test individual requests.
+1. Open Postman
+2. Import the collection and environment files
+3. Set `dev` as the active environment
+4. Start the server using a setup script
+5. Send requests or run tests
 
-> The `{{base_url}}` variable is set to `http://localhost:3000/api/v1`
+> The `{{base_url}}` is set to `http://localhost:3000/api/v1`
 
 ---
 

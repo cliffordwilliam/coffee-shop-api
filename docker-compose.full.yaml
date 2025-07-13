@@ -14,11 +14,15 @@ services:
     build:
       context: .
       dockerfile: ${BE_APP_CONTAINER_DOCKERFILE}
+      args:
+        # Inject app env here for App Dockerfile
+        NODE_REQUIRED_MAJOR: ${NODE_REQUIRED_MAJOR}
+        PORT: ${PORT}
     container_name: ${BE_APP_CONTAINER_NAME}
     ports:
       - "${PORT}:${PORT}"
     environment:
-      # Inject app env here
+      # Inject app env here for App codebase
       API_PREFIX: "${API_PREFIX}"
       DATABASE_URL: "${DBMS_CONTAINER_URL}"
       PORT: "${PORT}"

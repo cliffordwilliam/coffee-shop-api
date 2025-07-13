@@ -52,6 +52,7 @@ print_banner "Env Check"
 
 # .env
 exit_on_lie ".env.example is present" "[ -f ".env.example" ]"
+# I decided not to check what vars are inside, just if the .env.example file is there
 echo "🔍 Checking for .env file..."
 if [ ! -f ".env" ]; then
     echo "ℹ️  .env file is not found."
@@ -84,7 +85,6 @@ exit_on_lie "PRISMA_SEED_SCRIPT_NAME is set" '[ -n "$PRISMA_SEED_SCRIPT_NAME" ]'
 
 # package.json scripts
 exit_on_lie "PACKAGE_JSON_DEV_SCRIPT_NAME is set" '[ -n "$PACKAGE_JSON_DEV_SCRIPT_NAME" ]'
-
 
 # Constants
 DBMS_CONTAINER_NAME="${DBMS_CONTAINER_NAME}"
@@ -202,7 +202,10 @@ IS_DB_CONTAINER_MADE=true
 wait_for_ready "PostgreSQL" "docker exec $DBMS_CONTAINER_NAME pg_isready -U $DB_USER"
 
 # Compose up BE App Container
-exit_on_lie "Docker compose is up" "docker compose -f "$FULL_YAML" up -d --build app --remove-orphans"
+exit_on_lie "Docker build succeeds" \
+  "docker compose -f \"$FULL_YAML\" build --build-arg NODE_REQUIRED_MAJOR=\"$NODE_REQUIRED_MAJOR\" --build-arg PORT=\"$PORT\" app"
+exit_on_lie "Docker compose is up" \
+  "docker compose -f \"$FULL_YAML\" up -d --remove-orphans app"
 IS_APP_CONTAINER_MADE=true
 
 # Prisma in BE App Container

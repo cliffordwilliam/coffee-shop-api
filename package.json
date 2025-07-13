@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "test": "jest",
+    "test:api": "newman run postman/postman_collection.json --environment postman/postman_environment.json",
     "prepare": "husky"
   },
   "repository": {
@@ -42,16 +43,16 @@
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "swagger-ui-express": "^5.0.1",
     "typescript-eslint": "^8.36.0"
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
-    "@types/swagger-ui-express": "^4.1.8",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "joi": "^17.13.3",
-    "swagger-ui-express": "^5.0.1",
     "winston": "^3.17.0",
     "zod": "^3.25.67"
   }
