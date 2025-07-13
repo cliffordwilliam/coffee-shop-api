@@ -4,7 +4,7 @@ name: Postman Check
 on: [push, pull_request]
 
 jobs:
-  postman-check:
+  postman-check-action:
     runs-on: ubuntu-latest
     container: node:20
 

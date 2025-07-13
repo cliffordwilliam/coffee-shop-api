@@ -2,7 +2,7 @@
 name: Prettier Check
 on: [push, pull_request] # On these events, run these jobs
 jobs:
-  format-prettier-action:
+  prettier-check-action:
     runs-on: ubuntu-latest
 
     steps:

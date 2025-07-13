@@ -1,8 +1,8 @@
 # Security guard to check if codebase unit test works before entering remote.
-name: Run Tests
+name: Jest Check
 on: [push, pull_request] # On these events, run these jobs
 jobs:
-  jest-tests-action:
+  jest-check-action:
     runs-on: ubuntu-latest
 
     steps:

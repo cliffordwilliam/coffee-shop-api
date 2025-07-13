@@ -2,7 +2,7 @@
 name: ESLint Check
 on: [push, pull_request] # On these events, run these jobs
 jobs:
-  lint-eslint-action:
+  eslint-check-action:
     runs-on: ubuntu-latest
 
     steps:
