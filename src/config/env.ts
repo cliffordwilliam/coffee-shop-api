@@ -8,6 +8,8 @@ dotenv.config();
 const envSchema = Joi.object({
   API_PREFIX: Joi.string().default("/api"),
   PORT: Joi.number().default(3000),
+  LOCALHOST: Joi.string(),
+  PROTOCOL: Joi.string(),
   NODE_ENV: Joi.string()
     .valid("development", "production", "test")
     .default("development"),
@@ -31,6 +33,8 @@ if (error) {
 export const env = {
   apiPrefix: envVars.API_PREFIX,
   port: envVars.PORT,
+  localhost: envVars.LOCALHOST,
+  protocol: envVars.PROTOCOL,
   nodeEnv: envVars.NODE_ENV as "development" | "production" | "test",
   postgres: {
     containerUrl: envVars.DATABASE_URL,

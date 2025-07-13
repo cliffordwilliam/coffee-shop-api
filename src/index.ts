@@ -8,7 +8,6 @@ import { swaggerSpec } from "../docs/swagger";
 import { logger } from "./lib/logger";
 
 const app = express();
-const PORT = env.port;
 
 // Allow all origins
 app.use(cors());
@@ -17,9 +16,11 @@ app.use(cors());
 app.use(express.json());
 
 // Swagger docs (skip in test)
-if (process.env.NODE_ENV !== "test") {
+if (env.nodeEnv !== "test") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  logger.info(`📘 Swagger UI available at http://localhost:${PORT}/api-docs`);
+  logger.info(
+    `📘 Swagger UI available at ${env.protocol}://${env.localhost}:${env.port}/api-docs`,
+  );
 }
 
 // Modules
@@ -38,8 +39,10 @@ app.get("/healthz", (_req, res) => {
 });
 
 // Start HTTP server
-app.listen(PORT, "0.0.0.0", () => {
-  logger.info(`Server running on http://localhost:${PORT}${env.apiPrefix}`);
+app.listen(env.port, "0.0.0.0", () => {
+  logger.info(
+    `Server running on ${env.protocol}://${env.localhost}:${env.port}${env.apiPrefix}`,
+  );
 });
 
 // Also handle fatal errors

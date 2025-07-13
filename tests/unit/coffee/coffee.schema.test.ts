@@ -9,7 +9,7 @@ import {
   UpdateCoffeeResponseSchema,
   DeleteCoffeeResponseSchema,
 } from "@/modules/coffee/coffee.schema";
-import { SuccessResponseSchema } from "@/modules/api/schema";
+import { SuccessResponseSchema } from "@/modules/api/api.schema";
 import { PaginationMeta } from "@/modules/common/common.schema";
 
 describe("coffee.schema", () => {

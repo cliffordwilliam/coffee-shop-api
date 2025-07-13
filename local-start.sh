@@ -75,6 +75,8 @@ exit_on_lie "DBMS_CONTAINER_NAME is set" '[ -n "$DBMS_CONTAINER_NAME" ]'
 exit_on_lie "REGULAR_YAML file is set and exists" '[ -f "$REGULAR_YAML" ]'
 exit_on_lie "DB_USER (PostgreSQL user) is set" '[ -n "$DB_USER" ]'
 exit_on_lie "MAX_RETRIES is a valid number" '[[ "$MAX_RETRIES" =~ ^[0-9]+$ ]]'
+exit_on_lie "LOCALHOST is set" '[ -n "$LOCALHOST" ]'
+exit_on_lie "PROTOCOL is set" '[ -n "$PROTOCOL" ]'
 exit_on_lie "PORT is a valid port number" '[[ "$PORT" =~ ^[0-9]+$ && "$PORT" -ge 1 && "$PORT" -le 65535 ]]'
 exit_on_lie "API_PREFIX is set and starts with '/'" '[[ "$API_PREFIX" == /* ]]'
 
@@ -223,8 +225,8 @@ exit_on_lie "Port ${PORT} is free" "! lsof -i :${PORT} >/dev/null 2>&1"
 npm run dev & 
 APP_PID=$!
 # Wait until the app responds on port ${PORT} or timeout after 10 seconds
-wait_for_ready "Local App" "curl -s http://localhost:${PORT}${API_PREFIX} >/dev/null"
+wait_for_ready "Local App" "curl -s ${PROTOCOL}://${LOCALHOST}:${PORT}${API_PREFIX} >/dev/null"
 exit_on_lie "BE App is running" "lsof -i :${PORT} >/dev/null 2>&1"
 echo "👉 Press Ctrl C to stop the server"
-echo "🌐 Visit http://localhost:${PORT}${API_PREFIX}"
+echo "🌐 Visit ${PROTOCOL}://${LOCALHOST}:${PORT}${API_PREFIX}"
 wait $APP_PID

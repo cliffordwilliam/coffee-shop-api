@@ -69,6 +69,10 @@ set +a
 print_banner "Validating .env Variables"
 
 # Basic validations
+exit_on_lie "NODE_REQUIRED_MAJOR is a valid number" '[[ "$NODE_REQUIRED_MAJOR" =~ ^[0-9]+$ ]]'
+exit_on_lie "LOCALHOST is set" '[ -n "$LOCALHOST" ]'
+exit_on_lie "PROTOCOL is set" '[ -n "$PROTOCOL" ]'
+exit_on_lie "PORT is a valid port number" '[[ "$PORT" =~ ^[0-9]+$ && "$PORT" -ge 1 && "$PORT" -le 65535 ]]'
 exit_on_lie "DBMS_CONTAINER_NAME is set" '[ -n "$DBMS_CONTAINER_NAME" ]'
 exit_on_lie "DB_USER (PostgreSQL user) is set" '[ -n "$DB_USER" ]'
 exit_on_lie "MAX_RETRIES is a valid number" '[[ "$MAX_RETRIES" =~ ^[0-9]+$ ]]'
@@ -87,6 +91,7 @@ exit_on_lie "PRISMA_SEED_SCRIPT_NAME is set" '[ -n "$PRISMA_SEED_SCRIPT_NAME" ]'
 exit_on_lie "PACKAGE_JSON_DEV_SCRIPT_NAME is set" '[ -n "$PACKAGE_JSON_DEV_SCRIPT_NAME" ]'
 
 # Constants
+NODE_REQUIRED_MAJOR=${NODE_REQUIRED_MAJOR}
 DBMS_CONTAINER_NAME="${DBMS_CONTAINER_NAME}"
 BE_APP_CONTAINER_NAME="${BE_APP_CONTAINER_NAME}"
 FULL_YAML="${FULL_YAML}"
@@ -217,7 +222,7 @@ exit_on_lie "DBMS Container is seeded by BE App Container" "docker exec "$BE_APP
 # Mark Start BE App Container & DBMS Container
 print_banner "BE App Container & DBMS Container are ready"
 echo "👉 Press Ctrl C to stop the server"
-echo "🌐 Visit http://localhost:${PORT}${API_PREFIX}"
+echo "🌐 Visit ${PROTOCOL}://${LOCALHOST}:${PORT}${API_PREFIX}"
 
 # Wait to keep logs visible
 docker compose -f "$FULL_YAML" logs -f & LOG_PID=$!

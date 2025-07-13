@@ -1,240 +1,187 @@
 import { version, name, description } from "../package.json";
 import { env } from "@/config/env";
+import {
+  OpenAPIRegistry,
+  OpenApiGeneratorV3,
+} from "@asteasolutions/zod-to-openapi";
+import {
+  CoffeeSchema,
+  CreateCoffeeSchema,
+  UpdateCoffeeSchema,
+} from "@/modules/coffee/coffee.schema";
+import {
+  IdParamSchema,
+  PaginationQuerySchema,
+  PaginationMetaSchema,
+} from "@/modules/common/common.schema";
+import {
+  ErrorResponseSchema,
+  SuccessResponseSchema,
+} from "@/modules/api/api.schema";
+import { z } from "zod";
+import { METHODS, CONTENT, HTTP_STATUS } from "@/constants/http";
 
-export const swaggerSpec = {
+// Get registry to turn zods to docs
+const registry = new OpenAPIRegistry();
+
+// Register Coffees schemas
+registry.register("Coffee", CoffeeSchema);
+registry.register("CreateCoffee", CreateCoffeeSchema);
+registry.register("UpdateCoffee", UpdateCoffeeSchema);
+// Register Param schema
+registry.register("IdParam", IdParamSchema);
+// Register Query schema
+registry.register("PaginationQuery", PaginationQuerySchema);
+// Register Response schema
+registry.register("PaginationMeta", PaginationMetaSchema);
+registry.register("ErrorResponse", ErrorResponseSchema);
+
+const registerCoffeeEndpoints = () => {
+  // This function registers all coffee module endpoints
+  const basePath = "/coffees";
+
+  registry.registerPath({
+    method: METHODS.GET,
+    path: basePath,
+    summary: "Get all coffees",
+    request: {
+      query: PaginationQuerySchema,
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description: "A list of coffees",
+        content: {
+          [CONTENT.JSON]: {
+            schema: SuccessResponseSchema(
+              z.array(CoffeeSchema),
+              PaginationMetaSchema,
+            ),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: METHODS.POST,
+    path: basePath,
+    summary: "Create a new coffee",
+    request: {
+      body: {
+        content: {
+          [CONTENT.JSON]: {
+            schema: CreateCoffeeSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      [HTTP_STATUS.CREATED]: {
+        description: "Coffee created",
+        content: {
+          [CONTENT.JSON]: {
+            schema: SuccessResponseSchema(CoffeeSchema),
+          },
+        },
+      },
+      [HTTP_STATUS.BAD_REQUEST]: {
+        description: "Validation error",
+        content: {
+          [CONTENT.JSON]: {
+            schema: ErrorResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: METHODS.GET,
+    path: `${basePath}/{id}`,
+    summary: "Get a single coffee by ID",
+    request: {
+      params: IdParamSchema,
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description: "Coffee found",
+        content: {
+          [CONTENT.JSON]: {
+            schema: SuccessResponseSchema(CoffeeSchema),
+          },
+        },
+      },
+      [HTTP_STATUS.NOT_FOUND]: {
+        description: "Coffee not found",
+        content: {
+          [CONTENT.JSON]: {
+            schema: ErrorResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: METHODS.PATCH,
+    path: `${basePath}/{id}`,
+    summary: "Update a coffee by ID",
+    request: {
+      params: IdParamSchema,
+      body: {
+        content: {
+          [CONTENT.JSON]: {
+            schema: UpdateCoffeeSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description: "Coffee updated",
+        content: {
+          [CONTENT.JSON]: {
+            schema: SuccessResponseSchema(CoffeeSchema),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: METHODS.DELETE,
+    path: `${basePath}/{id}`,
+    summary: "Delete a coffee by ID",
+    request: {
+      params: IdParamSchema,
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description: "Coffee deleted",
+        content: {
+          [CONTENT.JSON]: {
+            schema: SuccessResponseSchema(CoffeeSchema),
+          },
+        },
+      },
+    },
+  });
+};
+
+registerCoffeeEndpoints();
+
+const generator = new OpenApiGeneratorV3(registry.definitions);
+
+export const swaggerSpec = generator.generateDocument({
   openapi: "3.0.0",
   info: {
     title: name,
     version,
     description,
   },
-  paths: {
-    "/healthz": {
-      get: {
-        summary: "Health check",
-        responses: {
-          "200": {
-            description: "OK",
-          },
-        },
-      },
+  servers: [
+    {
+      url: `${env.protocol}://${env.localhost}:${env.port}${env.apiPrefix}`,
     },
-    [`${env.apiPrefix}/coffees`]: {
-      get: {
-        summary: "Get all coffees",
-        parameters: [
-          {
-            in: "query",
-            name: "page",
-            schema: { type: "integer", minimum: 1 },
-            required: false,
-            description: "Page number for pagination",
-          },
-          {
-            in: "query",
-            name: "limit",
-            schema: { type: "integer", minimum: 1 },
-            required: false,
-            description: "Number of items per page",
-          },
-        ],
-        responses: {
-          "200": {
-            description: "List of coffees",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  data: [
-                    {
-                      id: 1,
-                      name: "Espresso",
-                      description: "Strong black coffee",
-                      price: 25000,
-                      createdAt: "2024-01-01T00:00:00.000Z",
-                      updatedAt: "2024-01-01T00:00:00.000Z",
-                    },
-                  ],
-                  meta: {
-                    pagination: {
-                      page: 1,
-                      size: 10,
-                      total: 1,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      post: {
-        summary: "Create a new coffee",
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              example: {
-                name: "Latte",
-                description: "Milk-based coffee",
-                price: 30000,
-              },
-            },
-          },
-        },
-        responses: {
-          "201": {
-            description: "Coffee created",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  data: {
-                    id: 2,
-                    name: "Latte",
-                    description: "Milk-based coffee",
-                    price: 30000,
-                    createdAt: "2024-01-01T00:00:00.000Z",
-                    updatedAt: "2024-01-01T00:00:00.000Z",
-                  },
-                },
-              },
-            },
-          },
-          "400": {
-            description: "Validation error",
-            content: {
-              "application/json": {
-                example: {
-                  success: false,
-                  error: {
-                    message: "Validation failed",
-                    details: { field: "name", message: "Name is required" },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    [`${env.apiPrefix}/coffees/{id}`]: {
-      get: {
-        summary: "Get a single coffee by ID",
-        parameters: [
-          {
-            in: "path",
-            name: "id",
-            required: true,
-            schema: { type: "integer", minimum: 1 },
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Coffee found",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  data: {
-                    id: 1,
-                    name: "Espresso",
-                    description: "Strong black coffee",
-                    price: 25000,
-                    createdAt: "2024-01-01T00:00:00.000Z",
-                    updatedAt: "2024-01-01T00:00:00.000Z",
-                  },
-                },
-              },
-            },
-          },
-          "404": {
-            description: "Coffee not found",
-            content: {
-              "application/json": {
-                example: {
-                  success: false,
-                  error: {
-                    message: "Coffee with ID 99 not found",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      patch: {
-        summary: "Update a coffee by ID",
-        parameters: [
-          {
-            in: "path",
-            name: "id",
-            required: true,
-            schema: { type: "integer", minimum: 1 },
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              example: {
-                name: "Latte Macchiato",
-              },
-            },
-          },
-        },
-        responses: {
-          "200": {
-            description: "Coffee updated",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  data: {
-                    id: 2,
-                    name: "Latte Macchiato",
-                    description: "Milk-based coffee",
-                    price: 30000,
-                    createdAt: "2024-01-01T00:00:00.000Z",
-                    updatedAt: "2024-01-02T00:00:00.000Z",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      delete: {
-        summary: "Delete a coffee by ID",
-        parameters: [
-          {
-            in: "path",
-            name: "id",
-            required: true,
-            schema: { type: "integer", minimum: 1 },
-          },
-        ],
-        responses: {
-          "200": {
-            description: "Coffee deleted",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  data: {
-                    id: 2,
-                    name: "Latte Macchiato",
-                    description: "Milk-based coffee",
-                    price: 30000,
-                    createdAt: "2024-01-01T00:00:00.000Z",
-                    updatedAt: "2024-01-02T00:00:00.000Z",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-};
+  ],
+});

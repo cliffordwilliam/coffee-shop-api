@@ -1,31 +1,43 @@
 import { z } from "zod";
-import { SuccessResponseSchema } from "@/modules/api/schema";
+import { SuccessResponseSchema } from "@/modules/api/api.schema";
 import { PaginationMetaSchema } from "../common/common.schema";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+
+// Turns zod to swag schema (zod defines whats being rendered on API doc page)
+extendZodWithOpenApi(z);
 
 // This file defines Zod and type shape of coffee requests and responses
 
 // Base coffee Zod to avoid repetition in this file
 // Used for input payload (POST, PUT, ...)
 export const CoffeeBaseSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().max(255).optional(),
-  price: z.number().positive("Price must be positive"),
+  name: z.string().min(1, "Name is required").openapi({ example: "Espresso" }),
+  description: z
+    .string()
+    .max(255)
+    .optional()
+    .openapi({ example: "Strong coffee" }),
+  price: z
+    .number()
+    .positive("Price must be positive")
+    .openapi({ example: 3.5 }),
 });
 
 // Full coffee Zod to avoid repetition in this file
 // Used for response payload (GET, ...)
 export const CoffeeSchema = CoffeeBaseSchema.extend({
-  id: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+  id: z.number().openapi({ example: 1 }),
+  createdAt: z.date().openapi({ example: new Date().toISOString() }),
+  updatedAt: z.date().openapi({ example: new Date().toISOString() }),
+}).openapi("Coffee");
 
 // Request input payload (Zod + Type shape)
 // Create (req.body)
-export const CreateCoffeeSchema = CoffeeBaseSchema;
+export const CreateCoffeeSchema = CoffeeBaseSchema.openapi("CreateCoffee");
 export type CreateCoffeeRequest = z.infer<typeof CreateCoffeeSchema>;
 // Update (req.body)
-export const UpdateCoffeeSchema = CoffeeBaseSchema.partial();
+export const UpdateCoffeeSchema =
+  CoffeeBaseSchema.partial().openapi("UpdateCoffee");
 export type UpdateCoffeeRequest = z.infer<typeof UpdateCoffeeSchema>;
 
 // Response (Zod + Type shape)

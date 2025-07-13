@@ -27,6 +27,8 @@ services:
       DATABASE_URL: "${DBMS_CONTAINER_URL}"
       PORT: "${PORT}"
       NODE_ENV: "${NODE_ENV}"
+      LOCALHOST: "${LOCALHOST}"
+      PROTOCOL: "${PROTOCOL}"
     depends_on:
       - ${DBMS_CONTAINER_IMAGE}
     networks:

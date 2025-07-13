@@ -2,7 +2,10 @@ import { ERROR_CODES } from "@/modules/api/errorCodes";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
-import { ErrorResponseSchema, type ErrorResponse } from "@/modules/api/schema";
+import {
+  ErrorResponseSchema,
+  type ErrorResponse,
+} from "@/modules/api/api.schema";
 import { validateResponse } from "@/utils/validateResponse";
 import { HTTP_STATUS } from "@/constants/http";
 
