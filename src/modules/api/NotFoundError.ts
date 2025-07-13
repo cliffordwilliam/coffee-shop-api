@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from "@/constants/http";
 import { ApiError } from "./ApiError";
-import { ERROR_CODES } from "./errorCodes";
+import { ERROR_CODES } from "../../constants/errorCodes";
 
 // My custom 404 error class
 // Instance and throw it for any 404 in app errors

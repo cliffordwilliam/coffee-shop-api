@@ -1,7 +1,7 @@
 // This file defines type shapes and zods for error res and success res
 
 import { z } from "zod";
-import { ErrorCodeEnum, type ErrorCodeValue } from "./errorCodes";
+import { ErrorCodeEnum, type ErrorCodeValue } from "../../constants/errorCodes";
 
 // This is my type shape for error response
 export interface ErrorResponse {

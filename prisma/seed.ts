@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import { logger } from "@/lib/logger";
+
 async function main() {
   const coffeeData = [
     {
@@ -30,17 +32,18 @@ async function main() {
       }),
     ),
   );
-  console.log(`🌱 Seeded ${coffees.length} coffees:`);
+  logger.info(`✅ Seeded ${coffees.length} coffees`);
   coffees.forEach((coffee) =>
-    console.log(`☕️ ${coffee.name} ($${coffee.price})`),
+    logger.info(`☕️ ${coffee.name} ($${coffee.price})`),
   );
 }
 main()
   .then(async () => {
+    logger.info("🌱 Seeding completed. Disconnecting Prisma.");
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    logger.error("❌ Error during seeding", { error: e });
     await prisma.$disconnect();
     process.exit(1);
   });

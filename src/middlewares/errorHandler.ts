@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "@/modules/api/errorCodes";
+import { ERROR_CODES } from "@/constants/errorCodes";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiError } from "@/modules/api/ApiError";
@@ -8,6 +8,7 @@ import {
 } from "@/modules/api/api.schema";
 import { validateResponse } from "@/utils/validateResponse";
 import { HTTP_STATUS } from "@/constants/http";
+import { logger } from "@/lib/logger";
 
 // This file is the global error boundary
 
@@ -28,6 +29,10 @@ export function errorHandler(
       message: e.message,
       type: e.code,
     }));
+    logger.warn("Zod validation error", {
+      name: err.name,
+      issues: details,
+    });
     // Use custom meta dict to make my ErrorResponse type shape
     const errorResponse: ErrorResponse = {
       success: false,
@@ -50,6 +55,13 @@ export function errorHandler(
 
   // Catch any of my custom ApiError class instances thrown by app
   if (err instanceof ApiError) {
+    logger.warn("ApiError caught", {
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      statusCode: err.statusCode,
+      details: err.details,
+    });
     // Use my custom ApiError class instance props to make my ErrorResponse shape
     const errorResponse: ErrorResponse = {
       success: false,
@@ -71,6 +83,11 @@ export function errorHandler(
   }
 
   // Catch any unknown errors thrown by app
+  logger.error("Unhandled server error", {
+    name: err.name,
+    message: err.message,
+    stack: err.stack,
+  });
   // Manually make my ErrorResponse shape here
   const errorResponse: ErrorResponse = {
     success: false,
@@ -85,6 +102,5 @@ export function errorHandler(
     errorResponse,
   );
   // Give it to client
-  console.log(err);
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json(validErrorResponse);
 }

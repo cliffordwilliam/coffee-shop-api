@@ -10,7 +10,7 @@ const customFormat = printf(({ level, message, timestamp }) => {
   return `[${timestamp}] ${level}: ${message}`;
 });
 
-// Silent when in node env ci
+// Silent when in node env ci, Winston is async and chatty, github CI stdout gets flooded
 const isSilent = env.nodeEnv === NODE_ENVS.CI;
 
 // Dynamic format based on node env

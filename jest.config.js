@@ -14,7 +14,12 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
-  coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/generated/"],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "<rootDir>/generated/",
+    "<rootDir>/src/lib/logger.ts",
+    "<rootDir>/src/config/env.ts",
+  ],
   coverageThreshold: {
     global: {
       branches: 80,

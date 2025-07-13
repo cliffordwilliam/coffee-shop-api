@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 
 // Use prisma to find many
 export const getAllCoffees = async (page: number, limit: number) => {
-  logger.info("Grab all coffees");
+  logger.info(`Fetching all coffees - page: ${page}, limit: ${limit}`);
   return await prisma.$transaction([
     prisma.coffee.count(),
     prisma.coffee.findMany({
@@ -18,19 +18,19 @@ export const getAllCoffees = async (page: number, limit: number) => {
 
 // Use prisma to find one
 export const getCoffeeById = async (id: number) => {
-  logger.info("Grab all coffees");
+  logger.info(`Fetching coffee with id: ${id}`);
   return await prisma.coffee.findUnique({ where: { id } });
 };
 
 // Use prisma to create
 export const createCoffee = async (data: CreateCoffeeRequest) => {
-  logger.info("Grab all coffees");
+  logger.info(`Creating new coffee: ${data.name}`);
   return await prisma.coffee.create({ data });
 };
 
 // Use prisma to patch
 export const updateCoffee = async (id: number, data: UpdateCoffeeRequest) => {
-  logger.info("Grab all coffees");
+  logger.info(`Updating coffee with id: ${id}`);
   return await prisma.coffee.update({
     where: { id },
     data,
@@ -39,6 +39,6 @@ export const updateCoffee = async (id: number, data: UpdateCoffeeRequest) => {
 
 // Use prisma to delete one
 export const deleteCoffee = async (id: number) => {
-  logger.info("Grab all coffees");
+  logger.info(`Deleting coffee with id: ${id}`);
   return await prisma.coffee.delete({ where: { id } });
 };

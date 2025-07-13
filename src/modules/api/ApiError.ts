@@ -1,5 +1,5 @@
 import { HTTP_STATUS, HttpStatusValue } from "@/constants/http";
-import type { ErrorCodeValue } from "./errorCodes";
+import type { ErrorCodeValue } from "../../constants/errorCodes";
 
 // This file defines my error base class
 
